@@ -152,7 +152,7 @@ if(isset($_GET['act'])){
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="index" class="nav-link">
+                <a href="index.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>รายงาน</p>
                 </a>
@@ -167,7 +167,7 @@ if(isset($_GET['act'])){
           </li>
           <li class="nav-header">TEST</li>
           <li class="nav-item">
-            <a href="budget" class="nav-link">
+            <a href="budget.php" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 งบประมาณ
