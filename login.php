@@ -56,7 +56,7 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-4">
-                <button type="button" class="btn btn-primary btn-block" ละ name="login" id="login">
+                <button type="button" class="btn btn-primary btn-block" name="login" id="login">
                 <span class="button__text"><i class="fas fa-sign-in-alt"></i></span>
                 </button>
                 
