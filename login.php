@@ -91,7 +91,7 @@ $(document).ready(function(){
   if($.trim(username).length > 0 && $.trim(password).length > 0)
   {
    $.ajax({
-    url:"check.php",
+    url:"/plan/check.php",
     method:"POST",
     data:{username:username, password:password},
     cache:false,
