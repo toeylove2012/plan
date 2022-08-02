@@ -114,6 +114,7 @@ $(document).ready(function(){
       Swal.fire({
          title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!',
          text: 'โปรดลองใหม่อีกครั้ง',
+         text: (data),
          icon: 'error',
          confirmButtonText: 'ยืนยัน',
          heightAuto: false
