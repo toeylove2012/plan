@@ -93,7 +93,6 @@ $(document).ready(function(){
    $.ajax({
     url:"check.php",
     method:"POST",
-    dataType:"JSON",
     data:{username:username, password:password},
     cache:false,
     beforeSend:function(){
@@ -112,7 +111,7 @@ $(document).ready(function(){
      else
      {
       $('#login').removeClass('button--loading');
-      alert("What follows is blank: " + console.log('Error: ' + error););
+      alert("What follows is blank: " + console.log(username));
       Swal.fire({
          title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!',
          text: 'โปรดลองใหม่อีกครั้ง',
