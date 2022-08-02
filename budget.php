@@ -1,5 +1,9 @@
 <?php 
 session_start();
+if(!isset($_SESSION["username"]))
+{
+ header("location: login.php");
+}
 if(isset($_GET['act'])){
 	if($_GET['act']== 'excel'){
 		header("Content-Type: application/xls");
