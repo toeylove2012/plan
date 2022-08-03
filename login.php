@@ -29,7 +29,7 @@
       
             <form method="post">
               <div class="input-group mb-3">
-                <input type="text" name="txt_username" id="txt_username" class="form-control" placeholder="ชื่อผู้ใช้" require>
+                <input type="text" name="username" id="username" class="form-control" placeholder="ชื่อผู้ใช้" require>
                 <div class="input-group-append">
                   <div class="input-group-text">
                   <span class="fas fa-address-card"></span>
@@ -37,7 +37,7 @@
                 </div>
               </div>
               <div class="input-group mb-3">
-                <input type="password" name="txt_pwd" id="txt_pwd" class="form-control" placeholder="รหัสผ่าน" require>
+                <input type="password" name="password" id="password" class="form-control" placeholder="รหัสผ่าน" require>
                 <div class="input-group-append">
                   <div class="input-group-text">
                       <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
@@ -86,8 +86,8 @@
     <script>
 $(document).ready(function(){
  $('#login').click(function(){
-  var username = $('#txt_username').val();
-  var password = $('#txt_pwd').val();
+  var username = $('#username').val();
+  var password = $('#password').val();
   if($.trim(username).length > 0 && $.trim(password).length > 0)
   {
    $.ajax({
@@ -102,6 +102,7 @@ $(document).ready(function(){
     {
      if(data)
      {
+      alert(data)
               $(function(){
               $("body").fadeOut(2000,function(){
               window.location = "index.php"
@@ -110,6 +111,7 @@ $(document).ready(function(){
      }
      else
      {
+      alert(data)
       $('#login').removeClass('button--loading');
       Swal.fire({
          title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!',
@@ -121,10 +123,6 @@ $(document).ready(function(){
      }
     }
    });
-  }
-  else
-  {
-
   }
  });
 });
