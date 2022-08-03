@@ -37,7 +37,7 @@
                 </div>
               </div>
               <div class="input-group mb-3">
-                <input type="password" name="password" id="password" class="form-control" placeholder="รหัสผ่าน" require>
+                <input type="password" name="pwd" id="pwd" class="form-control" placeholder="รหัสผ่าน" require>
                 <div class="input-group-append">
                   <div class="input-group-text">
                       <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
@@ -87,13 +87,13 @@
 $(document).ready(function(){
  $('#login').click(function(){
   var username = $('#username').val();
-  var password = $('#password').val();
-  if($.trim(username).length > 0 && $.trim(password).length > 0)
+  var pwd = $('#pwd').val();
+  if($.trim(username).length > 0 && $.trim(pwd).length > 0)
   {
    $.ajax({
     url:"check.php",
     method:"POST",
-    data:{username:username, password:password},
+    data:{username:username, pwd:pwd},
     cache:false,
     beforeSend:function(){
      $('#login').addClass('button--loading');
