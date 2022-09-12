@@ -1,10 +1,6 @@
 <?php 
-session_start();
-if(!isset($_SESSION["username"]))
-{
- header("location: login.php");
-}
-require 'connect.php';
+$date_start = isset($_GET['date_start']) ? $_GET['date_start'] :  date("Y-m-d",strtotime(date("Y-m-d")." -7 days")) ;
+$date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,11 +9,14 @@ require 'connect.php';
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>งานวางแผนและงบประมาณ</title>
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="libs/css/adminlte.min.css">
 <style>
@@ -25,16 +24,13 @@ require 'connect.php';
     vertical-align: middle;
     width: 35px;
     height: 35px;
-    border-radius: 50%; 
-}
-.info-tooltip,.info-tooltip:focus,.info-tooltip:hover{
-    background:unset;
-    border:unset;
-    padding:unset;
-  }
+    border-radius: 50%;
+    
+}	
 </style>
 </head>
 <body class="hold-transition sidebar-mini">
+
 <div class="wrapper">
 
   <!-- Navbar -->
@@ -186,102 +182,114 @@ require 'connect.php';
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-
-    <!-- Main content -->
-    <section class="content">
-    <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-money-bill-alt"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text">งบประมาณคงเหลือ</span>
-                <span class="info-box-number text-right">
-                <?php 
-                    $cur_bul = $con->query("SELECT sum(mv_price) as total FROM `money_detail` INNER JOIN `money_value` ON money_detail.md_id = money_value.md_id WHERE status = 	1 ")->fetch_assoc()['total'];
-                    echo number_format($cur_bul);
-                  ?>
-                </span>
-              </div>
-              <!-- /.info-box-content -->
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h5 class="card-title">รายงาน</h5>
+    </div>
+    <div class="card-body">
+        <form id="filter-form">
+            <div class="row align-items-end">
+                <div class="form-group col-md-3">
+                    <label for="date_start">เริ่มวันที่</label>
+                    <input type="date" class="form-control form-control-sm" name="date_start" value="<?php echo date("Y-m-d",strtotime($date_start)) ?>">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="date_start">สิ้นสุดวันที่</label>
+                    <input type="date" class="form-control form-control-sm" name="date_end" value="<?php echo date("Y-m-d",strtotime($date_end)) ?>">
+                </div>
+                <div class="form-group col-md-1">
+                    <button class="btn btn-flat btn-block btn-primary btn-sm"><i class="fa fa-filter"></i> กรอง</button>
+                </div>
+                <div class="form-group col-md-1">
+                    <button class="btn btn-flat btn-block btn-success btn-sm" type="button" id="printBTN"><i class="fa fa-print"></i> Print</button>
+                </div>
             </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col-12 col-sm-6 col-md-3 -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="fas fa-calendar-day"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text">รับงบประมาณวันนี้</span>
-                <span class="info-box-number text-right">1,410</span>
-              </div>
-              <!-- /.info-box-content -->
+        </form>
+        <hr>
+        <div id="printable">
+            <div>
+                <h4 class="text-center m-0"><?php //echo $_settings->info('name') ?></h4>
+                <h3 class="text-center m-0"><b>รายงานงบประมาณ</b></h3>
+                <hr style="width:15%">
+                <p class="text-center m-0">ระหว่างวันที่ <b><?php echo date("M d, Y",strtotime($date_start)) ?> ถึงวันที่ <?php echo date("M d, Y",strtotime($date_end)) ?></b></p>
+                <hr>
             </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col-12 col-sm-6 col-md-3 -->
-          <!-- /.col-12 col-sm-6 col-md-3 -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-calendar-day"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text">ใช้งบประมาณวันนี้</span>
-                <span class="info-box-number text-right">1,410</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col-12 col-sm-6 col-md-3 -->
+            <table class="table table-bordered">
+                 <colgroup>
+                    <col width="5%">                
+                    <col width="10%">                
+                    <col width="">                
+                    <col width="8%">                
+                    <col width="20%">                
+                </colgroup>
+                <thead>
+                    <tr class="bg-gray-light">
+                        <th class="text-center">#</th>
+                        <th>วันที่</th>
+                        <th>โครงการ/รายการ</th>
+                        <th>จำนวน</th>
+                        <th>หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $i = 1;
+                    $total = 0;
+                        $qry = $conn->query("SELECT r.*,c.category,c.balance from `running_balance` r inner join `categories` c on r.category_id = c.id where c.status=1 and r.balance_type = 1 and date(r.date_created) between '{$date_start}' and '{$date_end}' order by unix_timestamp(r.date_created) asc");
+                        while($row = $qry->fetch_assoc()):
+                            $row['remarks'] = (stripslashes(html_entity_decode($row['remarks'])));
+                            $total += $row['amount'];
+                    ?>
+                    <tr>
+                        <td class="text-center"><?php echo $i++ ?></td>
+                        <td><?php echo date("M d, Y",strtotime($row['date_created'])) ?></td>
+                        <td><?php echo $row['category'] ?></td>
+                        <td class="text-right"><?php echo number_format($row['amount']) ?></td>
+                        <td><div><?php echo $row['remarks'] ?></div></td>
+                    </tr>
+                    <?php endwhile; ?>
+                    <?php if($qry->num_rows <= 0): ?>
+                    <tr>
+                        <td class="text-center" colspan="5">ไม่พบข้อมูล...</td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-right px-3" colspan="3"><b>ทั้งหมด</b></td>
+                        <td class="text-right"><b><?php echo number_format($total) ?></b></td>
+                        <td class="bg-gray"></td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-        <!-- /.row -->
-        <div class="row">
-  <div class="col-lg-12">
-    <h4>งบประมาณโครงการ/รายการ</h4>
-    <hr>
-  </div>
-</div>
-<div class="col-md-12 d-flex justify-content-center">
-  <div class="input-group mb-3 col-md-5">
-    <input type="text" class="form-control" id="search" placeholder="ค้นหา...">
-    <div class="input-group-append">
-      <span class="input-group-text"><i class="fa fa-search"></i></span>
     </div>
-  </div>
 </div>
-<div class="row row-cols-12 row-cols-sm-1 row-cols-md-12 row-cols-lg-12">
-  <?php 
-  $categories = $con->query("SELECT *FROM `money_detail` INNER JOIN `money_value` ON money_detail.md_id = money_value.md_id WHERE status = 	1 ORDER BY money_detail.md_id ASC");
-    while($row = $categories->fetch_assoc()):
-  ?>
-  <div class="col p-0 cat-items">
-    <div class="callout callout-info">
-      <span class="float-right ml-1">
-        <B><?php echo number_format($row['mv_price']) ?></B>
-      </span>
-      <p class="mr-2"><b><?php echo $row['md_name'] ?></b></p>
-      <p class="mr-2 text-right"><b>งวด&nbsp;</b><b><?php echo $row['mv_installment'] ?></b></p>
-    </div>
-  </div>
-  <?php endwhile; ?>
-</div>
-<div class="col-md-12">
-  <h3 class="text-center" id="noData" style="display:none">ไม่พบข้อมูล.</h3>
-</div>
-</div>
-      </div>
-      <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-   <!-- /.content-wrapper -->
-</div>
-<!-- ./wrapper -->
-<!-- REQUIRED SCRIPTS -->
+<script>
+    $(function(){
+        $('#filter-form').submit(function(e){
+            e.preventDefault()
+            location.href = "./?page=reports/budget&date_start="+$('[name="date_start"]').val()+"&date_end="+$('[name="date_end"]').val()
+        })
 
+        $('#printBTN').click(function(){
+            var rep = $('#printable').clone();
+            var ns = $('head').clone();
+            start_loader()
+            rep.prepend(ns)
+            var nw = window.document.open('','_blank','width=900,height=600')
+                nw.document.write(rep.html())
+                nw.document.close()
+                setTimeout(function(){
+                    nw.print()
+                    setTimeout(function(){
+                        nw.close()
+                        end_loader()
+                    },500)
+                },500)
+        })
+    })
+</script>
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- active nav-link -->
@@ -290,5 +298,3 @@ require 'connect.php';
 <script src="libs/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="libs/js/adminlte.min.js"></script>
-</body>
-</html>

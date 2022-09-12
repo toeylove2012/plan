@@ -82,8 +82,19 @@
       <script src="plugins/jquery/jquery.min.js"></script>
 
     <!-- REQUIRED SCRIPTS -->
-    <!-- Ajax-->
+    <!--PressEnter-->
     <script>
+      var input = document.getElementById("password");
+      input.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("login").click();
+      }
+    });
+    </script>
+
+<!-- Ajax-->
+<script>
 $(document).ready(function(){
  $('#login').click(function(){
   var username = $('#username').val();
@@ -102,7 +113,6 @@ $(document).ready(function(){
     {
      if(data ==1)
      {
-      alert(data)
               $(function(){
               $("body").fadeOut(2000,function(){
               window.location = "index.php"
@@ -111,7 +121,6 @@ $(document).ready(function(){
      }
      else
      {
-      alert(data)
       $('#login').removeClass('button--loading');
       Swal.fire({
          title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!',

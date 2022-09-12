@@ -198,12 +198,12 @@ if(!isset($_SESSION["username"]))
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">ตั้งงบประมาณ</h1>
+            <h1 class="m-0">จัดการโครงการ</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-              <li class="breadcrumb-item active">ตั้งงบประมาณ</li>
+              <li class="breadcrumb-item"><a href="index">หน้าแรก</a></li>
+              <li class="breadcrumb-item active">จัดการโครงการ</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -217,7 +217,7 @@ if(!isset($_SESSION["username"]))
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                Report/Set up a budget   
+                Maintenance/category   
                 <div class="card-tools">
                 <button type="button" class="btn btn-primary" name="add" id="add" data-toggle="modal" data-target="#add_data_Modal">
                 <span><i class="fas fa-plus"></i></span>
@@ -249,28 +249,35 @@ if(!isset($_SESSION["username"]))
                 <div class="modal-body">  
                      <form method="post" id="insert_form">
                         <div class="form-group">
-                          <label for="moneytype" class="col-form-label">โครงการ/รายการ</label>
-                          <select name="md_id" id="md_id" class="custom-select selevt">
-                          <?php require 'connect.php';
-				                       $query = "SELECT * FROM `money_detail`";
+                          <label for="moneytype" class="col-form-label">ชื่อหมวดงบ</label>
+                          <select name="mt_id" id="mt_id" class="custom-select selevt"> 
+                            <?php require 'connect.php';
+				                       $query = "SELECT * FROM `money_type`";
 				                       $result2 = mysqli_query($con, $query);
                                $options = "";
                                while($row2 = mysqli_fetch_array($result2))
                                {
-                               $md_id = $row2['md_id'];
-                               $options = $options."<option value='$md_id'>$row2[2]</option>";
+                               $mt_id = $row2['mt_id'];
+                               $options = $options."<option value='$mt_id'>$row2[1]</option>";
                                }
 					                   ?>
                              <?php echo $options;?>
                           </select>   
                         </div> 
                         <div class="form-group">
-                          <label for="md-name" class="col-form-label">จำนวนเงิน</label>
-                          <input type="amount" class="form-control text-right number" id="amount" name="amount" require>
+                          <label for="md-name" class="col-form-label">ชื่อโครงการ/รายการ</label>
+                          <input type="text" class="form-control" id="md_name" name="md_name" require>
                         </div>
                         <div class="form-group">
             <label for="description-text" class="col-form-label">รายละเอียด</label>
             <textarea class="form-control" id="description" name="description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="status" class="col-form-label">สถานะ</label>
+            <select name="status" id="status" class="custom-select selevt">
+               <option value="1">เปิดใช้งาน</option>
+               <option value="0">ปิดใช้งาน</option>
+               </select>
           </div>
                           <input type="hidden" name="md_id" id="md_id" />  
                           <input type="submit" name="insert" id="insert" value="Insert" class="btn btn-success" />  
@@ -379,21 +386,6 @@ if(!isset($_SESSION["username"]))
 <!-- Sweetalert2 -->
 <script src="libs/js/sweetalert2.all.js"></script>
 <script>
-$('input.number').keyup(function(event) {
-
-// skip for arrow keys
-if(event.which >= 37 && event.which <= 40) return;
-
-// format number
-$(this).val(function(index, value) {
-  return value
-  .replace(/\D/g, "")
-  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  ;
-});
-});
-</script>
-<script>
 		$(document).ready(function(){
       $('input[type="text"]').change(function(){
         this.value = $.trim(this.value);
@@ -406,7 +398,7 @@ $(this).val(function(index, value) {
       $(document).on('click', '.edit_data', function(){  
            var md_id = $(this).attr("id");
            $.ajax({  
-                url:"budget_data.php",  
+                url:"users_data.php",  
                 method:"POST",  
                 data:{md_id:md_id},  
                 dataType:"json",
@@ -435,7 +427,7 @@ $(this).val(function(index, value) {
            }  
            else{
                 $.ajax({  
-                     url:"budget_add.php",  
+                     url:"users_add.php",  
                      method:"POST",  
                      data:$('#insert_form').serialize(),
                      beforeSend:function(){  
@@ -454,30 +446,34 @@ $(this).val(function(index, value) {
         var md_id = $(this).attr("id");
         if(md_id != '')
             {
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-            url:"users_delete.php",
-            method:"POST",
-            data:{md_id:md_id},
-            dataType:"json",
-            success:function(data){ 
-            setTimeout(location.reload.bind(location), 800);
+              swal.fire({
+                        title: 'คุณแน่ใจรึเปล่า?',
+                        text: "คุณจะไม่สามารถย้อนกลับได้!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'ใช่, ลบมัน!',
+                        cancelButtonText: 'ยกเลิก',
+                    }).then((result) => {
+                        if (result.value){
+                          $.ajax({
+                            url:"users_delete.php",
+                            method:"POST",
+                            data:{md_id:md_id},
+                            dataType:"json"
+                            })
+                            .done(function(response){
+                                swal.fire('Deleted!', response.message, response.status);
+                            })
+                            .fail(function(){
+                                swal.fire('Oops...', 'Something went wrong with ajax !', 'error');
+                            });
             }
           });
         }
         }) 
-        }
       });   
- });  
  </script>
 <!-- Datatable-->
 <script>

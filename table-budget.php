@@ -29,7 +29,31 @@ if(!isset($_SESSION["username"]))
     height: 35px;
     border-radius: 50%;
     
-}	
+}
+th.rotated-text {
+  position: relative;
+  height: 140px;
+  white-space: nowrap;
+  padding: 0 !important;
+}
+
+th.rotated-text>div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: rotate(-90deg) translateY(-50%);
+  transform-origin: 0 0;
+}
+
+th.rotated-text>div>span {
+  display: inline-block;
+  padding: 0px 15px;
+  padding-left: 5px;
+}
+@media print{
+  @page {size: landscape}
+}
+
 </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -198,12 +222,12 @@ if(!isset($_SESSION["username"]))
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">ตั้งงบประมาณ</h1>
+            <h1 class="m-0">ตารางงบประมาณ</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-              <li class="breadcrumb-item active">ตั้งงบประมาณ</li>
+              <li class="breadcrumb-item"><a href="index">หน้าแรก</a></li>
+              <li class="breadcrumb-item active">ตารางงบประมาณ</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -217,118 +241,86 @@ if(!isset($_SESSION["username"]))
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                Report/Set up a budget   
-                <div class="card-tools">
-                <button type="button" class="btn btn-primary" name="add" id="add" data-toggle="modal" data-target="#add_data_Modal">
-                <span><i class="fas fa-plus"></i></span>
-                เพิ่มข้อมูล
-                </button>
-                <div id="budget_table"> 
-                <div id="dataModal" class="modal fade" tabindex="-1">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-           <div class="modal-header">
-                  <h5 class="modal-title">Modal title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                 </div> 
-                <div class="modal-body">  
-                </div>  
-                <div class="modal-footer">  
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>  
- <div id="add_data_Modal" class="modal fade">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-           <div class="modal-header">
-        <h5 class="modal-title">เพิ่มข้อมูล</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-                <div class="modal-body">  
-                     <form method="post" id="insert_form">
-                        <div class="form-group">
-                          <label for="moneytype" class="col-form-label">โครงการ/รายการ</label>
-                          <select name="md_id" id="md_id" class="custom-select selevt">
-                          <?php require 'connect.php';
-				                       $query = "SELECT * FROM `money_detail`";
-				                       $result2 = mysqli_query($con, $query);
-                               $options = "";
-                               while($row2 = mysqli_fetch_array($result2))
-                               {
-                               $md_id = $row2['md_id'];
-                               $options = $options."<option value='$md_id'>$row2[2]</option>";
-                               }
-					                   ?>
-                             <?php echo $options;?>
-                          </select>   
-                        </div> 
-                        <div class="form-group">
-                          <label for="md-name" class="col-form-label">จำนวนเงิน</label>
-                          <input type="amount" class="form-control text-right number" id="amount" name="amount" require>
-                        </div>
-                        <div class="form-group">
-            <label for="description-text" class="col-form-label">รายละเอียด</label>
-            <textarea class="form-control" id="description" name="description"></textarea>
-          </div>
-                          <input type="hidden" name="md_id" id="md_id" />  
-                          <input type="submit" name="insert" id="insert" value="Insert" class="btn btn-success" />  
-                     </form>  
-                </div>  
-                <div class="modal-footer">  
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>  
-                 </div>
-                </div> 
+Table-Budget
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
-          <th class="text-center">#</th>
-					<th>วันที่</th>
-          <th>หมวดงบ</th>
-					<th>โครงการ/รายการ</th>
-					<th>รายละเอียด</th>
-					<th>สถานะ</th>
-					<th>จัดการ</th>
+                    <th>รายการ</th>
+                  <?php 
+													for($i=1;$i<=12;$i++){
+														echo "<th class='rotated-text'>";
+                            echo "<div><span>งวด&nbsp;$i</span></div></th>";
+													}
+													?>
                   </tr>
                   </thead>
                   <tbody>
-                  <?php require 'connect.php';
-				$query = $con->query("SELECT * FROM `money_detail` INNER JOIN `money_type` ON money_detail.mt_id = money_type.mt_id ");
-        $row = 1;
+              <?php require 'connect.php';
+				$query = $con->query("SELECT * FROM `money_type`");
 				while($fetch = $query->fetch_array()){
-          $status = $fetch['status'];
+          $mt_id = $fetch['mt_id']
 					?>
-                     <tr>
-                    <td class="text-center"><?php echo $row?></td>
-                    <td><?php echo $fetch['date_created']?></td>
-                    <td><?php echo $fetch['mt_name']?></td>
-                    <td><?php echo $fetch['md_name']?></td>
-                    <td><?php echo $fetch['description']?></td>
-                    <td class="text-center"><?php 
-                      if($status==1){
-                        echo "<span class='badge badge-success'>เปิดใช้งาน</span>";
-                      }
-                      else{
-                        echo "<span class='badge badge-danger'>ปิดใช้งาน</span>";
-                     }
-                  ?></td>
-                    <td class="text-center"><span>
-                    <button class='btn btn-primary btn-sm edit btn-flat edit_data' name="edit" value="Edit" id="<?php echo $fetch['md_id']?>"><i class='fa fa-edit'></i> </button>
-                    <button class='btn btn-danger btn-sm delete btn-flat delete_data' name="delete" value="delelte" id="<?php echo $fetch['md_id']?>"><i class='fa fa-trash'></i> </button>
-                    </span>
-</div></td>
-                    </tr>
-                    <?php $row++;
-                  }?>
+                    <tr>
+                    <th class="no-sort" colspan="0"><?php echo $fetch['mt_name']?></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                    <th style="display:none;"></th>
+                  </tr>
+                <?php $sql = "SELECT md_id,md_name FROM `money_detail` WHERE mt_id = $mt_id"; 
+		  $result = mysqli_query($con,$sql);
+		  if (mysqli_num_rows($result) > 0) {
+			while($row = mysqli_fetch_assoc($result)) {
+				$md_id = $row["md_id"]
+		  ?>
+                    <tr>
+                    <td> <?php echo $row["md_name"]?></td>
+                    <?php 
+		  $sql1 = "SELECT mv_price FROM `money_value` WHERE md_id = $md_id"; 
+		  $result1 = mysqli_query($con,$sql1);
+      $r=1;
+			while($row1 = mysqli_fetch_assoc($result1)) {
+		  ?>
+                
+      <td><?php echo number_format($row1["mv_price"],2)?></td>
+                    <?php 
+                $r++;  
+                }
+                  while($r<=12)
+                  {
+                    echo "<td>-</td>";
+                    $r++;
+                  }
+                  
+                  } ?>
+                  
+                    </tr> 
+                    <?php }} ?>
                   </tbody>
+                  <tfoot>
+                  <tr>
+                    <th>รวม</th>
+                    <?php 
+													for($i=1;$i<=12;$i++){
+                            $cur_bul = $con->query("SELECT sum(mv_price) as total FROM `money_value` WHERE mv_installment = $i")->fetch_assoc()['total']; 
+														echo "<th>";
+                            echo number_format($cur_bul,2);
+                            echo "</th>";
+                          }
+													?>
+                  </tr>
+                  </tfoot>
                 </table>
               
               </div>
@@ -376,118 +368,58 @@ if(!isset($_SESSION["username"]))
 <script src="libs/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="libs/js/adminlte.min.js"></script>
-<!-- Sweetalert2 -->
-<script src="libs/js/sweetalert2.all.js"></script>
+<!--PDF Font & Datatable-->
 <script>
-$('input.number').keyup(function(event) {
-
-// skip for arrow keys
-if(event.which >= 37 && event.which <= 40) return;
-
-// format number
-$(this).val(function(index, value) {
-  return value
-  .replace(/\D/g, "")
-  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  ;
-});
-});
-</script>
-<script>
-		$(document).ready(function(){
-      $('input[type="text"]').change(function(){
-        this.value = $.trim(this.value);
-      });  
-      $('#add').click(function(){  
-           $('#insert').val("เพิ่มข้อมูล");  
-           $('#insert_form')[0].reset();
-           $('#md_id').val("");  
-      });  
-      $(document).on('click', '.edit_data', function(){  
-           var md_id = $(this).attr("id");
-           $.ajax({  
-                url:"budget_data.php",  
-                method:"POST",  
-                data:{md_id:md_id},  
-                dataType:"json",
-                success:function(data){  
-                     $('#mt_id').val(data.mt_id);  
-                     $('#md_name').val(data.md_name);
-                     $('#md_name').val(data.md_name);
-                     $('#description').val(data.description);  
-                     $('#status').val(data.status);  
-                     $('#md_id').val(data.md_id);  
-                     $('#insert').val("อัพเดท/แก้ไข");  
-                     $('#add_data_Modal').modal('show');  
-                
-              }  
-           }); 
-      });  
-      $('#insert_form').on("submit", function(event){  
-           event.preventDefault();
-           if($('#md_name').val() == "")  
-           {  
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'กรุณากรอกชื่อโครงการ!',
-            })  
-           }  
-           else{
-                $.ajax({  
-                     url:"budget_add.php",  
-                     method:"POST",  
-                     data:$('#insert_form').serialize(),
-                     beforeSend:function(){  
-                          $('#insert').val("Inserting");  
-                     },  
-                     success:function(data){  
-                          $('#insert_form')[0].reset();  
-                          $('#add_data_Modal').modal('hide');
-                          $('#budget_table').html(data);
-                          setTimeout(location.reload.bind(location), 800);
-                     }  
-                });
-              }
-      });
-      $(document).on('click', '.delete_data', function(){
-        var md_id = $(this).attr("id");
-        if(md_id != '')
-            {
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-            url:"users_delete.php",
-            method:"POST",
-            data:{md_id:md_id},
-            dataType:"json",
-            success:function(data){ 
-            setTimeout(location.reload.bind(location), 800);
-            }
-          });
-        }
-        }) 
-        }
-      });   
- });  
- </script>
-<!-- Datatable-->
-<script>
+  pdfMake.fonts = {
+  Roboto: {
+    normal: 'THSarabunNew.ttf',
+    bold: 'THSarabunNew Bold.ttf',
+    italics: 'THSarabunNew Italic.ttf',
+    bolditalics: 'THSarabunNew BoldItalic.ttf'
+  }
+};
   $(function () {
     $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,"order": [],
+      "responsive": true, "lengthChange": false, "autoWidth": false,"order": [],"ordering": false,
       "columnDefs": [ {
       "targets"  : 'no-sort',
       "orderable": false,
     }],
+      buttons: [
+            {
+                extend: 'copyHtml5',
+                text: '<i class="fas fa-copy"></i> คัดลอก',
+                titleAttr: 'Copy'
+            },
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel"></i> Excel',
+                titleAttr: 'Excel'
+            },
+            {
+                extend: 'csvHtml5',
+                text: '<i class="fas fa-file-csv"></i> CSV',
+                charset: 'UTF-8',
+                bom: true,
+                titleAttr: 'CSV'
+            },
+            {
+                extend: 'pdfHtml5',
+                text: '<i class="fas fa-file-pdf"></i> PDF',
+                titleAttr: 'PDF'
+            },
+            {
+                extend: 'print',
+                text: '<i class="fas fa-print"></i> Print',
+                titleAttr: 'Print'
+            },
+            {
+                extend: 'colvis',
+                text: '<i class="fas fa-columns"></i> Columns',
+                titleAttr: 'Colvis'
+            }
+ 
+        ],
         language: {
             "zeroRecords": "ไม่พบข้อมูล",
             "info": "แสดงข้อมูล _START_ ถึง _END_ (รวมทั้งหมด _TOTAL_ ข้อมูล)",
@@ -495,7 +427,14 @@ $(this).val(function(index, value) {
           paginate: {
       previous: '<i class="fas fa-angle-left"></i>',
       next: '<i class="fas fa-angle-right"></i>'
-    }
+    },
+            buttons: {
+                copyTitle: 'คัดลอกไปที่คลิปบอร์ด',
+                copySuccess: {
+                    _: 'คัดลอก %d แถวไปยังคลิปบอร์ด',
+                    1: 'คัดลอก 1 แถวไปยังคลิปบอร์ด'
+                }
+              }
             }
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     $('#example2').DataTable({
@@ -509,6 +448,5 @@ $(this).val(function(index, value) {
     });
   });
 </script>
-
 </body>
 </html>
