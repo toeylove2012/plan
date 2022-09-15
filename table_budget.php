@@ -142,79 +142,7 @@ th.rotated-text>div>span {
           </div>
         </div>
       </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-          <li class="nav-item menu-open">
-          </li>
-          <li class="nav-item">
-            <a href="index.php" class="nav-link">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-wallet"></i>
-              <p>
-                ตั้งงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-money-bill-wave"></i>
-              <p>
-                เบิกจ่ายงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">REPORTS</li>
-          <li class="nav-item">
-            <a href="dashboard.php" class="nav-link">
-              <i class="nav-icon fas fa-file"></i>
-              <p>
-                งบประมาณทั้งหมด
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                เบิกจ่ายงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="table-budget.php" class="nav-link">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                ตารางงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">Maintenance</li>
-          <li class="nav-item">
-            <a href="maint_category.php" class="nav-link">
-              <i class="nav-icon fas fa-th-list "></i>
-              <p>
-                จัดการโครงการ
-              </p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
-
+      <?php include 'sidebarmenu.php';?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -282,19 +210,30 @@ Table-Budget
 		  $result = mysqli_query($con,$sql);
 		  if (mysqli_num_rows($result) > 0) {
 			while($row = mysqli_fetch_assoc($result)) {
-				$md_id = $row["md_id"]
+				$md_id = $row["md_id"];
 		  ?>
                     <tr>
                     <td> <?php echo $row["md_name"]?></td>
                     <?php 
-		  $sql1 = "SELECT mv_price FROM `money_value` WHERE md_id = $md_id"; 
-		  $result1 = mysqli_query($con,$sql1);
       $r=1;
+		  //$sql1 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id";
+      $sql1 = "SELECT mv_price,mv_installment FROM `money_value` WHERE md_id = $md_id"; 
+		  $result1 = mysqli_query($con,$sql1);
+      
 			while($row1 = mysqli_fetch_assoc($result1)) {
-		  ?>
-                
-      <td><?php echo number_format($row1["mv_price"],2)?></td>
-                    <?php 
+      $mv_installment = $r;
+        $sql2 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id AND mv_installment = $mv_installment";
+        $result2 = mysqli_query($con,$sql2);
+        while($row2 = mysqli_fetch_assoc($result2)) {
+        $sum = $row2['total'];
+		  ?>          
+      <td><?php 
+      //echo number_format($sum,2)</td>
+      echo $row2['total'];
+      //echo number_format($sum,2);
+      echo "T";
+      ?></td>
+                    <?php }
                 $r++;  
                 }
                   while($r<=12)
@@ -337,12 +276,12 @@ Table-Budget
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
-    </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
+    <footer class="main-footer">
+      <div class="float-right d-none d-sm-block">
+        <b>Version</b> 3.2.0
+      </div>
+      <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    </footer>
 </div>
 <!-- ./wrapper -->
 <!-- REQUIRED SCRIPTS -->

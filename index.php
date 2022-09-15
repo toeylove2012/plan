@@ -119,7 +119,7 @@ require 'connect.php';
             </a>
           </li>
           <li class="nav-item">
-            <a href="budget.php" class="nav-link">
+            <a href="expense.php" class="nav-link">
             <i class="nav-icon fas fa-money-bill-wave"></i>
               <p>
                 เบิกจ่ายงบประมาณ
@@ -136,7 +136,7 @@ require 'connect.php';
             </a>
           </li>
           <li class="nav-item">
-            <a href="budget.php" class="nav-link">
+            <a href="report_expense.php" class="nav-link">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>
                 เบิกจ่ายงบประมาณทั้งหมด

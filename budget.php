@@ -118,79 +118,7 @@ if(!isset($_SESSION["username"]))
           </div>
         </div>
       </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-          <li class="nav-item menu-open">
-          </li>
-          <li class="nav-item">
-            <a href="index.php" class="nav-link">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-wallet"></i>
-              <p>
-                ตั้งงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-money-bill-wave"></i>
-              <p>
-                เบิกจ่ายงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">REPORTS</li>
-          <li class="nav-item">
-            <a href="dashboard.php" class="nav-link">
-              <i class="nav-icon fas fa-file"></i>
-              <p>
-                งบประมาณทั้งหมด
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                เบิกจ่ายงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="table-budget.php" class="nav-link">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                ตารางงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">Maintenance</li>
-          <li class="nav-item">
-            <a href="maint_category.php" class="nav-link">
-              <i class="nav-icon fas fa-th-list "></i>
-              <p>
-                จัดการโครงการ
-              </p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
-
+      <?php include 'sidebarmenu.php';?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -251,6 +179,7 @@ if(!isset($_SESSION["username"]))
                         <div class="form-group">
                           <label for="moneytype" class="col-form-label">โครงการ/รายการ</label>
                           <select name="md_id" id="md_id" class="custom-select selevt">
+                            <option value="" selected hidden>เลือกรายการ</option>
                           <?php require 'connect.php';
 				                       $query = "SELECT * FROM `money_detail`";
 				                       $result2 = mysqli_query($con, $query);
@@ -266,7 +195,7 @@ if(!isset($_SESSION["username"]))
                         </div> 
                         <div class="form-group">
                           <label for="md-name" class="col-form-label">จำนวนเงิน</label>
-                          <input type="amount" class="form-control text-right number" id="amount" name="amount" require>
+                          <input class="form-control text-right number" id="amount" name="amount" require>
                         </div>
                         <div class="form-group">
             <label for="description-text" class="col-form-label">รายละเอียด</label>
@@ -295,7 +224,6 @@ if(!isset($_SESSION["username"]))
           <th>หมวดงบ</th>
 					<th>โครงการ/รายการ</th>
 					<th>รายละเอียด</th>
-					<th>สถานะ</th>
 					<th>จัดการ</th>
                   </tr>
                   </thead>
@@ -312,14 +240,6 @@ if(!isset($_SESSION["username"]))
                     <td><?php echo $fetch['mt_name']?></td>
                     <td><?php echo $fetch['md_name']?></td>
                     <td><?php echo $fetch['description']?></td>
-                    <td class="text-center"><?php 
-                      if($status==1){
-                        echo "<span class='badge badge-success'>เปิดใช้งาน</span>";
-                      }
-                      else{
-                        echo "<span class='badge badge-danger'>ปิดใช้งาน</span>";
-                     }
-                  ?></td>
                     <td class="text-center"><span>
                     <button class='btn btn-primary btn-sm edit btn-flat edit_data' name="edit" value="Edit" id="<?php echo $fetch['md_id']?>"><i class='fa fa-edit'></i> </button>
                     <button class='btn btn-danger btn-sm delete btn-flat delete_data' name="delete" value="delelte" id="<?php echo $fetch['md_id']?>"><i class='fa fa-trash'></i> </button>
@@ -378,6 +298,7 @@ if(!isset($_SESSION["username"]))
 <script src="libs/js/adminlte.min.js"></script>
 <!-- Sweetalert2 -->
 <script src="libs/js/sweetalert2.all.js"></script>
+<!--  -->
 <script>
 $('input.number').keyup(function(event) {
 
@@ -413,7 +334,6 @@ $(this).val(function(index, value) {
                 success:function(data){  
                      $('#mt_id').val(data.mt_id);  
                      $('#md_name').val(data.md_name);
-                     $('#md_name').val(data.md_name);
                      $('#description').val(data.description);  
                      $('#status').val(data.status);  
                      $('#md_id').val(data.md_id);  
@@ -425,14 +345,14 @@ $(this).val(function(index, value) {
       });  
       $('#insert_form').on("submit", function(event){  
            event.preventDefault();
-           if($('#md_name').val() == "")  
+           if($('#amount').val() == "" || $('#md_id').val() == "")  
            {  
             Swal.fire({
               icon: 'error',
-              title: 'Oops...',
-              text: 'กรุณากรอกชื่อโครงการ!',
-            })  
-           }  
+              title: 'อุ๊ปส์...',
+              text: 'กรุณากรอกจำนวนเงินและเลือกโครงการ/รายการ!',
+            })   
+           }
            else{
                 $.ajax({  
                      url:"budget_add.php",  

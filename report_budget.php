@@ -1,4 +1,9 @@
 <?php 
+session_start();
+if(!isset($_SESSION["username"]))
+{
+ header("location: login.php");
+}
 $date_start = isset($_GET['date_start']) ? $_GET['date_start'] :  date("Y-m-d",strtotime(date("Y-m-d")." -7 days")) ;
 $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
 ?>
@@ -30,7 +35,6 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
 </style>
 </head>
 <body class="hold-transition sidebar-mini">
-
 <div class="wrapper">
 
   <!-- Navbar -->
@@ -50,9 +54,35 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
       <li class="dropdown user user-menu open">
       <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-      <img src="imgs/profile/profile.png" alt="Avatar" class="avatar">
+      <img src="img/profile.png" alt="Avatar" class="avatar">
       <span class="hidden-xs"><?php echo $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] ?></span>
           </a>
           <div class="dropdown-menu dropdown-menu dropdown-menu-right">
@@ -60,7 +90,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
           <i class="fas fa-user"></i> Profile
           </a>
           <div class="dropdown-divider"></div>
-          <a href="logout.php" class="dropdown-item">
+          <a href="logout" class="dropdown-item">
           <i class="fas fa-sign-out-alt"></i> Sign out
           </a>
           <div>
@@ -73,7 +103,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <div class="brand-link">
-      <img src="imgs/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <img src="img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">BNCC Budgetplan</span>
 </div>
 
@@ -90,79 +120,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
           </div>
         </div>
       </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-               <li class="nav-item menu-open">
-          </li>
-          <li class="nav-item">
-            <a href="index.php" class="nav-link">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-wallet"></i>
-              <p>
-                ตั้งงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-            <i class="nav-icon fas fa-money-bill-wave"></i>
-              <p>
-                เบิกจ่ายงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">REPORTS</li>
-          <li class="nav-item">
-            <a href="report_budget.php" class="nav-link">
-              <i class="nav-icon fas fa-file"></i>
-              <p>
-                งบประมาณทั้งหมด
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="budget.php" class="nav-link">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                เบิกจ่ายงบประมาณทั้งหมด
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="table-budget.php" class="nav-link">
-              <i class="nav-icon fas fa-table"></i>
-              <p>
-                ตารางงบประมาณ
-              </p>
-            </a>
-          </li>
-          <li class="nav-header">Maintenance</li>
-          <li class="nav-item">
-            <a href="maint_category.php" class="nav-link">
-              <i class="nav-icon fas fa-th-list "></i>
-              <p>
-                จัดการโครงการ
-              </p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
-
+      <?php include 'sidebarmenu.php';?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -170,23 +128,28 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">รายงาน</h1>
+            <h1 class="m-0">รายงานงบประมาณทั้งหมด</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-              <li class="breadcrumb-item active">Dashboard</li>
+              <li class="breadcrumb-item"><a href="index">หน้าแรก</a></li>
+              <li class="breadcrumb-item active">รายงานงบประมาณทั้งหมด</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-<div class="card card-primary card-outline">
-    <div class="card-header">
-        <h5 class="card-title">รายงาน</h5>
-    </div>
-    <div class="card-body">
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                Report/Budget 
+              </div>
+              <div class="card-body">
         <form id="filter-form">
             <div class="row align-items-end">
                 <div class="form-group col-md-3">
@@ -204,8 +167,8 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                     <button class="btn btn-flat btn-block btn-success btn-sm" type="button" id="printBTN"><i class="fa fa-print"></i> Print</button>
                 </div>
             </div>
-        </form>
-        <hr>
+</form>
+<hr>
         <div id="printable">
             <div>
                 <h4 class="text-center m-0"><?php //echo $_settings->info('name') ?></h4>
@@ -214,87 +177,288 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                 <p class="text-center m-0">ระหว่างวันที่ <b><?php echo date("M d, Y",strtotime($date_start)) ?> ถึงวันที่ <?php echo date("M d, Y",strtotime($date_end)) ?></b></p>
                 <hr>
             </div>
-            <table class="table table-bordered">
-                 <colgroup>
-                    <col width="5%">                
-                    <col width="10%">                
-                    <col width="">                
-                    <col width="8%">                
-                    <col width="20%">                
-                </colgroup>
-                <thead>
-                    <tr class="bg-gray-light">
-                        <th class="text-center">#</th>
-                        <th>วันที่</th>
-                        <th>โครงการ/รายการ</th>
-                        <th>จำนวน</th>
-                        <th>หมายเหตุ</th>
+                <div id="budget_table"> 
+                <div id="dataModal" class="modal fade" tabindex="-1">  
+      <div class="modal-dialog">  
+           <div class="modal-content">  
+           <div class="modal-header">
+                  <h5 class="modal-title">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div> 
+                <div class="modal-body">  
+                </div>  
+                <div class="modal-footer">  
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
+                </div>  
+           </div>  
+      </div>  
+ </div>  
+ <div id="add_data_Modal" class="modal fade">  
+      <div class="modal-dialog">  
+           <div class="modal-content">  
+           <div class="modal-header">
+        <h5 class="modal-title">เพิ่มข้อมูล</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+                <div class="modal-body">  
+                     <form method="post" id="insert_form">
+                        <div class="form-group">
+                          <label for="moneytype" class="col-form-label">ชื่อหมวดงบ</label>
+                          <select name="mt_id" id="mt_id" class="custom-select selevt"> 
+                            <?php require 'connect.php';
+				                       $query = "SELECT * FROM `money_type`";
+				                       $result2 = mysqli_query($con, $query);
+                               $options = "";
+                               while($row2 = mysqli_fetch_array($result2))
+                               {
+                               $mt_id = $row2['mt_id'];
+                               $options = $options."<option value='$mt_id'>$row2[1]</option>";
+                               }
+					                   ?>
+                             <?php echo $options;?>
+                          </select>   
+                        </div> 
+                        <div class="form-group">
+                          <label for="md-name" class="col-form-label">ชื่อโครงการ/รายการ</label>
+                          <input type="text" class="form-control" id="md_name" name="md_name" require>
+                        </div>
+                        <div class="form-group">
+            <label for="description-text" class="col-form-label">รายละเอียด</label>
+            <textarea class="form-control" id="description" name="description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="status" class="col-form-label">สถานะ</label>
+            <select name="status" id="status" class="custom-select selevt">
+               <option value="1">เปิดใช้งาน</option>
+               <option value="0">ปิดใช้งาน</option>
+               </select>
+          </div>
+                          <input type="hidden" name="md_id" id="md_id" />  
+                          <input type="submit" name="insert" id="insert" value="Insert" class="btn btn-success" />  
+                     </form>  
+                </div>  
+                <div class="modal-footer">  
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
+                </div>  
+           </div>  
+      </div>  
+ </div>  
+                 </div>
+                </div> 
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+          <th class="text-center">#</th>
+					<th>วันที่</th>
+          <th>หมวดงบ</th>
+					<th>โครงการ/รายการ</th>
+					<th>รายละเอียด</th>
+					<th>สถานะ</th>
+					<th>จัดการ</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php require 'connect.php';
+				$query = $con->query("SELECT * from `running_balance` inner join `money_detail` on running_balance.md_id = money_detail.md_id inner join `money_value` on running_balance.md_id = money_value.md_id where money_detail.status=1 and running_balance.balance_type = 2 and date(running_balance.date_created) between '{$date_start}' and '{$date_end}' order by unix_timestamp(running_balance.date_created) asc");
+        $row = 1;
+				while($fetch = $query->fetch_array()){
+          $status = $fetch['status'];
+					?>
+                     <tr>
+                    <td class="text-center"><?php echo $row?></td>
+                    <td><?php echo $fetch['date_created']?></td>
+                    <td><?php echo $fetch['mt_name']?></td>
+                    <td><?php echo $fetch['md_name']?></td>
+                    <td><?php echo $fetch['description']?></td>
+                    <td class="text-center"><?php 
+                      if($status==1){
+                        echo "<span class='badge badge-success'>เปิดใช้งาน</span>";
+                      }
+                      else{
+                        echo "<span class='badge badge-danger'>ปิดใช้งาน</span>";
+                     }
+                  ?></td>
+                    <td class="text-center"><span>
+                    <button class='btn btn-primary btn-sm edit btn-flat edit_data' name="edit" value="Edit" id="<?php echo $fetch['md_id']?>"><i class='fa fa-edit'></i> </button>
+                    <button class='btn btn-danger btn-sm delete btn-flat delete_data' name="delete" value="delelte" id="<?php echo $fetch['md_id']?>"><i class='fa fa-trash'></i> </button>
+                    </span>
+</div></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $i = 1;
-                    $total = 0;
-                        $qry = $conn->query("SELECT r.*,c.category,c.balance from `running_balance` r inner join `categories` c on r.category_id = c.id where c.status=1 and r.balance_type = 1 and date(r.date_created) between '{$date_start}' and '{$date_end}' order by unix_timestamp(r.date_created) asc");
-                        while($row = $qry->fetch_assoc()):
-                            $row['remarks'] = (stripslashes(html_entity_decode($row['remarks'])));
-                            $total += $row['amount'];
-                    ?>
-                    <tr>
-                        <td class="text-center"><?php echo $i++ ?></td>
-                        <td><?php echo date("M d, Y",strtotime($row['date_created'])) ?></td>
-                        <td><?php echo $row['category'] ?></td>
-                        <td class="text-right"><?php echo number_format($row['amount']) ?></td>
-                        <td><div><?php echo $row['remarks'] ?></div></td>
-                    </tr>
-                    <?php endwhile; ?>
-                    <?php if($qry->num_rows <= 0): ?>
-                    <tr>
-                        <td class="text-center" colspan="5">ไม่พบข้อมูล...</td>
-                    </tr>
-                    <?php endif; ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td class="text-right px-3" colspan="3"><b>ทั้งหมด</b></td>
-                        <td class="text-right"><b><?php echo number_format($total) ?></b></td>
-                        <td class="bg-gray"></td>
-                    </tr>
-                </tfoot>
-            </table>
+                    <?php $row++;
+                  }?>
+                  </tbody>
+                </table>
+              
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
         </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.2.0
     </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
 </div>
-<script>
-    $(function(){
-        $('#filter-form').submit(function(e){
-            e.preventDefault()
-            location.href = "./?page=reports/budget&date_start="+$('[name="date_start"]').val()+"&date_end="+$('[name="date_end"]').val()
-        })
+<!-- ./wrapper -->
+<!-- REQUIRED SCRIPTS -->
 
-        $('#printBTN').click(function(){
-            var rep = $('#printable').clone();
-            var ns = $('head').clone();
-            start_loader()
-            rep.prepend(ns)
-            var nw = window.document.open('','_blank','width=900,height=600')
-                nw.document.write(rep.html())
-                nw.document.close()
-                setTimeout(function(){
-                    nw.print()
-                    setTimeout(function(){
-                        nw.close()
-                        end_loader()
-                    },500)
-                },500)
-        })
-    })
-</script>
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="plugins/jszip/jszip.min.js"></script>
+<script src="plugins/pdfmake/pdfmake.min.js"></script>
+<script src="plugins/pdfmake/vfs_fonts.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <!-- active nav-link -->
 <script src="libs/js/activenavlink.js"></script>
 <!-- Bootstrap 4 -->
 <script src="libs/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="libs/js/adminlte.min.js"></script>
+<!-- Sweetalert2 -->
+<script src="libs/js/sweetalert2.all.js"></script>
+<script>
+		$(document).ready(function(){
+      $('input[type="text"]').change(function(){
+        this.value = $.trim(this.value);
+      });  
+      $('#add').click(function(){  
+           $('#insert').val("เพิ่มข้อมูล");  
+           $('#insert_form')[0].reset();
+           $('#md_id').val("");  
+      });  
+      $(document).on('click', '.edit_data', function(){  
+           var md_id = $(this).attr("id");
+           $.ajax({  
+                url:"users_data.php",  
+                method:"POST",  
+                data:{md_id:md_id},  
+                dataType:"json",
+                success:function(data){  
+                     $('#mt_id').val(data.mt_id);  
+                     $('#md_name').val(data.md_name);
+                     $('#md_name').val(data.md_name);
+                     $('#description').val(data.description);  
+                     $('#status').val(data.status);  
+                     $('#md_id').val(data.md_id);  
+                     $('#insert').val("อัพเดท/แก้ไข");  
+                     $('#add_data_Modal').modal('show');  
+                
+              }  
+           }); 
+      });  
+      $('#insert_form').on("submit", function(event){  
+           event.preventDefault();
+           if($('#md_name').val() == "")  
+           {  
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'กรุณากรอกชื่อโครงการ!',
+            })  
+           }  
+           else{
+                $.ajax({  
+                     url:"users_add.php",  
+                     method:"POST",  
+                     data:$('#insert_form').serialize(),
+                     beforeSend:function(){  
+                          $('#insert').val("Inserting");  
+                     },  
+                     success:function(data){  
+                          $('#insert_form')[0].reset();  
+                          $('#add_data_Modal').modal('hide');
+                          $('#budget_table').html(data);
+                          setTimeout(location.reload.bind(location), 800);
+                     }  
+                });
+              }
+      });
+      $(document).on('click', '.delete_data', function(){
+        var md_id = $(this).attr("id");
+        if(md_id != '')
+            {
+              swal.fire({
+                        title: 'คุณแน่ใจรึเปล่า?',
+                        text: "คุณจะไม่สามารถย้อนกลับได้!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'ใช่, ลบมัน!',
+                        cancelButtonText: 'ยกเลิก',
+                    }).then((result) => {
+                        if (result.value){
+                          $.ajax({
+                            url:"users_delete.php",
+                            method:"POST",
+                            data:{md_id:md_id},
+                            dataType:"json"
+                            })
+                            .done(function(response){
+                                swal.fire('Deleted!', response.message, response.status);
+                            })
+                            .fail(function(){
+                                swal.fire('Oops...', 'Something went wrong with ajax !', 'error');
+                            });
+            }
+          });
+        }
+        }) 
+      });   
+ </script>
+<!-- Datatable-->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,"order": [],
+      "columnDefs": [ {
+      "targets"  : 'no-sort',
+      "orderable": false,
+    }],
+        language: {
+            "zeroRecords": "ไม่พบข้อมูล",
+            "info": "แสดงข้อมูล _START_ ถึง _END_ (รวมทั้งหมด _TOTAL_ ข้อมูล)",
+            "infoEmpty": "ข้อมูลว่างเปล่า",
+          paginate: {
+      previous: '<i class="fas fa-angle-left"></i>',
+      next: '<i class="fas fa-angle-right"></i>'
+    }
+            }
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+
+</body>
+</html>
