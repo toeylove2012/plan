@@ -224,7 +224,7 @@ Table-Budget
 	{
       		$mv_installment = $r;
         	// $sql2 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id AND mv_installment = $mv_installment";
-		$sql2="SELECT sum(mv_price) as total ,md_id,mv_installment FROM money_value GROUP BY md_id,mv_installment ORDER BY md_id,mv_installment";
+		$sql2="SELECT sum(mv_price) as total ,md_id,mv_installment FROM money_value WHERE md_id = $md_id AND mv_installment = $mv_installment GROUP BY md_id,mv_installment ORDER BY md_id,mv_installment";
         	$result2 = mysqli_query($con,$sql2);
         	while($row2 = mysqli_fetch_assoc($result2)) 
 		{
