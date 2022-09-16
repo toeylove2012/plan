@@ -220,12 +220,15 @@ Table-Budget
       $sql1 = "SELECT mv_price,mv_installment FROM `money_value` WHERE md_id = $md_id"; 
 		  $result1 = mysqli_query($con,$sql1);
       
-			while($row1 = mysqli_fetch_assoc($result1)) {
-      $mv_installment = $r;
-        $sql2 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id AND mv_installment = $mv_installment";
-        $result2 = mysqli_query($con,$sql2);
-        while($row2 = mysqli_fetch_assoc($result2)) {
-        $sum = $row2['total'];
+	while($row1 = mysqli_fetch_assoc($result1)) 
+	{
+      		$mv_installment = $r;
+        	// $sql2 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id AND mv_installment = $mv_installment";
+		$sql2="SELECT sum(mv_price) as total ,md_id,mv_installment FROM money_value GROUP BY md_id,mv_installment ORDER BY md_id,mv_installment";
+        	$result2 = mysqli_query($con,$sql2);
+        	while($row2 = mysqli_fetch_assoc($result2)) 
+		{
+        		$sum = $row2['total'];
 		  ?>          
       <td><?php 
       //echo number_format($sum,2)</td>
