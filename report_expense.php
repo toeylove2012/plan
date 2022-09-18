@@ -48,9 +48,6 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
       <li class="nav-item d-none d-sm-inline-block">
         <a href="index.php" class="nav-link">หน้าแรก</a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">ว่าง</a>
-      </li>
     </ul>
 
     <!-- Right navbar links -->
@@ -133,9 +130,6 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                 <div class="form-group col-md-1">
                     <button class="btn btn-flat btn-block btn-primary btn-sm"><i class="fa fa-filter"></i> กรอง</button>
                 </div>
-                <div class="form-group col-md-1">
-                    <button class="btn btn-flat btn-block btn-success btn-sm" type="button" id="printBTN"><i class="fa fa-print"></i> Print</button>
-                </div>
             </div>
         </form>
         <hr>
@@ -177,7 +171,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                     <tr>
                         <td class="text-center"><?php echo $i++ ?></td>
                         <td><?php echo date("M d, Y",strtotime($row['date_created'])) ?></td>
-                        <td><?php echo $row['category'] ?></td>
+                        <td><?php echo $row['md_name'] ?></td>
                         <td class="text-right"><?php echo number_format($row['amount']) ?></td>
                         <td><div><?php echo $row['remarks'] ?></div></td>
                     </tr>

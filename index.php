@@ -47,9 +47,6 @@ require 'connect.php';
       <li class="nav-item d-none d-sm-inline-block">
         <a href="index.php" class="nav-link">หน้าแรก</a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">ว่าง</a>
-      </li>
     </ul>
 
     <!-- Right navbar links -->
@@ -129,7 +126,7 @@ require 'connect.php';
                 <span class="info-box-text">งบประมาณคงเหลือ</span>
                 <span class="info-box-number text-right">
                 <?php 
-                    $cur_bul = $con->query("SELECT sum(mv_price) as total FROM `money_detail` INNER JOIN `money_value` ON money_detail.md_id = money_value.md_id WHERE status = 	1 ")->fetch_assoc()['total'];
+                    $cur_bul = $con->query("SELECT sum(balance) as total FROM `money_detail` WHERE status = 	1 ")->fetch_assoc()['total'];
                     echo number_format($cur_bul);
                   ?>
                 </span>
@@ -145,7 +142,12 @@ require 'connect.php';
 
               <div class="info-box-content">
                 <span class="info-box-text">รับงบประมาณวันนี้</span>
-                <span class="info-box-number text-right">1,410</span>
+                <span class="info-box-number text-right">
+                  <?php
+                    $today_budget = $con->query("SELECT sum(amount) as total FROM `running_balance` where md_id in (SELECT md_id FROM money_detail where status =1) and date(date_created) = '".(date("Y-m-d"))."' and balance_type = 1 ")->fetch_assoc()['total'];
+                    echo number_format($today_budget);
+                  ?>
+                </span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -159,7 +161,12 @@ require 'connect.php';
 
               <div class="info-box-content">
                 <span class="info-box-text">ใช้งบประมาณวันนี้</span>
-                <span class="info-box-number text-right">1,410</span>
+                <span class="info-box-number text-right">
+                <?php
+                    $today_budget = $con->query("SELECT sum(amount) as total FROM `running_balance` where md_id in (SELECT md_id FROM money_detail where status =1) and date(date_created) = '".(date("Y-m-d"))."' and balance_type = 2 ")->fetch_assoc()['total'];
+                    echo number_format($today_budget);
+                  ?>
+                </span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -167,6 +174,41 @@ require 'connect.php';
           </div>
           <!-- /.col-12 col-sm-6 col-md-3 -->
         </div>
+        <?php 
+        //budget
+        $sqlQuery = "SELECT sum(amount) as total FROM running_balance where balance_type = 1 UNION SELECT sum(amount) as total FROM running_balance where balance_type = 2";
+        $result = mysqli_query($con,$sqlQuery);
+        $chart_data="";
+            while ($row = mysqli_fetch_array($result)) { 
+    
+                $total[]  = $row['total'];
+                $budget = "งบคงเหลือ";
+                $expense = "เบิกจ่าย";
+            }
+    
+        ?>
+        
+        <!-- Donut CHART -->
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">แผนภูมิงบประมาณคงเหลือและเบิกจ่าย</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+              <h2 class="page-header text-center" >แผนภูมิงบประมาณคงเหลือและเบิกจ่าย</h2>
+                <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
         <!-- /.row -->
         <div class="row">
   <div class="col-lg-12">
@@ -176,24 +218,19 @@ require 'connect.php';
 </div>
 <div class="col-md-12 d-flex justify-content-center">
   <div class="input-group mb-3 col-md-5">
-    <input type="text" class="form-control" id="search" placeholder="ค้นหา...">
-    <div class="input-group-append">
-      <span class="input-group-text"><i class="fa fa-search"></i></span>
-    </div>
   </div>
 </div>
 <div class="row row-cols-12 row-cols-sm-1 row-cols-md-12 row-cols-lg-12">
   <?php 
-  $categories = $con->query("SELECT *FROM `money_detail` INNER JOIN `money_value` ON money_detail.md_id = money_value.md_id WHERE status = 	1 ORDER BY money_detail.md_id ASC");
+  $categories = $con->query("SELECT *FROM `money_detail` WHERE status = 	1 ORDER BY md_id ASC");
     while($row = $categories->fetch_assoc()):
   ?>
   <div class="col p-0 cat-items">
     <div class="callout callout-info">
       <span class="float-right ml-1">
-        <B><?php echo number_format($row['mv_price']) ?></B>
+        <B><?php echo number_format($row['balance']) ?></B>
       </span>
       <p class="mr-2"><b><?php echo $row['md_name'] ?></b></p>
-      <p class="mr-2 text-right"><b>งวด&nbsp;</b><b><?php echo $row['mv_installment'] ?></b></p>
     </div>
   </div>
   <?php endwhile; ?>
@@ -211,7 +248,6 @@ require 'connect.php';
 </div>
 <!-- ./wrapper -->
 <!-- REQUIRED SCRIPTS -->
-
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- active nav-link -->
@@ -220,5 +256,53 @@ require 'connect.php';
 <script src="libs/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="libs/js/adminlte.min.js"></script>
+<script src="plugins/chart.js/Chart.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+      //-------------
+    //- DONUT CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+    var donutData        = {
+      labels:['งบคงเหลือ','เบิกจ่าย'],
+      datasets: [
+        {
+          data:<?php echo json_encode($total); ?>,
+          backgroundColor : ['#0055ff', '#ff0000', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'doughnut',
+      data: donutData,
+      options: donutOptions
+    })
+
+    //-------------
+    //- PIE CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+    var pieData        = donutData;
+    var pieOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: pieData,
+      options: pieOptions
+    })
+                });
+    </script>
 </body>
 </html>

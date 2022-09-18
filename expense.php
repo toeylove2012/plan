@@ -130,12 +130,12 @@ if(!isset($_SESSION["username"]))
                         <div class="container-fluid">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <h1 class="m-0">ตั้งงบประมาณ</h1>
+                                    <h1 class="m-0">เบิกจ่ายงบประมาณ</h1>
                                 </div><!-- /.col -->
                                 <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
                                         <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                                        <li class="breadcrumb-item active">ตั้งงบประมาณ</li>
+                                        <li class="breadcrumb-item active">เบิกจ่ายงบประมาณ</li>
                                     </ol>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->
@@ -149,7 +149,7 @@ if(!isset($_SESSION["username"]))
                                 <div class="col-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            Report/Set up a budget
+                                            Report/Expense a budget
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                                     data-target="#completeModal">
@@ -163,7 +163,7 @@ if(!isset($_SESSION["username"]))
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="exampleModalLabel">
-                                                                    ตั้งงบประมาณ</h5>
+                                                                    เบิกจ่ายงบประมาณ</h5>
                                                                 <button type="button" class="close" data-dismiss="modal"
                                                                     aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
@@ -178,7 +178,7 @@ if(!isset($_SESSION["username"]))
                                                                         <option value="" selected hidden>เลือกรายการ
                                                                         </option>
                                                                         <?php require 'connect.php';
-				                       $query = "SELECT * FROM `money_detail`";
+				                       $query = "SELECT * FROM `money_detail` where `balance` > 0 order by md_name asc";
 				                       $result2 = mysqli_query($con, $query);
                                $options = "";
                                while($row2 = mysqli_fetch_array($result2))
@@ -221,7 +221,7 @@ if(!isset($_SESSION["username"]))
                                                                 </div>
                                                                 <input type="hidden" name="md_id" id="md_id" />
                                                                 <input type="hidden" name="balance_type"
-                                                                    id="balance_type" value="1" />
+                                                                    id="balance_type" value="2" />
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-primary"
@@ -272,7 +272,7 @@ if(!isset($_SESSION["username"]))
                                                             <input inputmode="numeric"
                                                                 oninput="this.value = this.value.replace(/\D+/g, '')"
                                                                 class="form-control text-right number" id="updateamount"
-                                                                name="updateamount" pattern="[0-9]+" min="0">
+                                                                name="updateamount" require pattern="[0-9]+" min="0">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="remarks-text"
@@ -285,7 +285,7 @@ if(!isset($_SESSION["username"]))
                                                         <input type="hidden" name="updateinstallment"
                                                             id="updateinstallment" />
                                                         <input type="hidden" name="updatebalance_type"
-                                                            id="updatebalance_type" value="1" />
+                                                            id="updatebalance_type" value="2" />
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-primary"
@@ -293,75 +293,75 @@ if(!isset($_SESSION["username"]))
                                                         <button type="button" class="btn btn-secondary"
                                                             data-dismiss="modal">ปิด</button>
                                                     </div>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <!-- /.card-header -->
-                                        <div class="card-body">
-                                            <table id="example1" class="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">#</th>
-                                                        <th>วันที่</th>
-                                                        <th>งวด</th>
-                                                        <th>โครงการ/รายการ</th>
-                                                        <th>จำนวน</th>
-                                                        <th>รายละเอียด</th>
-                                                        <th>จัดการ</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php require 'connect.php';
-				$query = $con->query("SELECT * FROM `running_balance` INNER JOIN `money_detail` ON running_balance.md_id = money_detail.md_id WHERE money_detail.status=1 and running_balance.balance_type=1 order by unix_timestamp(running_balance.date_created) desc");
+                                    </div>
+                                </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>วันที่</th>
+                                            <th>งวด</th>
+                                            <th>โครงการ/รายการ</th>
+                                            <th>จำนวน</th>
+                                            <th>รายละเอียด</th>
+                                            <th>จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php require 'connect.php';
+				$query = $con->query("SELECT * FROM `running_balance` INNER JOIN `money_detail` ON running_balance.md_id = money_detail.md_id WHERE money_detail.status=1 and running_balance.balance_type=2 order by unix_timestamp(running_balance.date_created) desc");
         $row = 1;
 				while($fetch = $query->fetch_array()){
 					?>
-                                                    <tr>
-                                                        <td class="text-center"><?php echo $row?></td>
-                                                        <td><?php echo $fetch['date_created']?></td>
-                                                        <td><?php echo $fetch['installment']?></td>
-                                                        <td><?php echo $fetch['md_name']?></td>
-                                                        <td><?php
+                                        <tr>
+                                            <td class="text-center"><?php echo $row?></td>
+                                            <td><?php echo $fetch['date_created']?></td>
+                                            <td><?php echo $fetch['installment']?></td>
+                                            <td><?php echo $fetch['md_name']?></td>
+                                            <td><?php
                     $amount = $fetch['amount'];
                     echo number_format($amount,2); ?></td>
-                                                        <td><?php echo $fetch['remarks']?></td>
-                                                        <td class="text-center"><span>
-                                                                <button class='btn btn-primary btn-sm edit btn-flat'
-                                                                    onclick="GetDetails('<?php echo $fetch['id']?>')"><i
-                                                                        class='fa fa-edit'></i>
-                                                                </button>
-                                                                <button class='btn btn-danger btn-sm delete btn-flat'
-                                                                    onclick="DeleteBudget('<?php echo $fetch['id']?>')"><i
-                                                                        class=' fa fa-trash'></i> </button>
-                                                            </span>
-                                        </div>
-                                        </td>
-                                        </tr>
-                                        <?php $row++;
-                  }?>
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                                <!-- /.card -->
+                                            <td><?php echo $fetch['remarks']?></td>
+                                            <td class="text-center"><span>
+                                                    <button class='btn btn-primary btn-sm edit btn-flat'
+                                                        onclick="GetDetails('<?php echo $fetch['id']?>')"><i
+                                                            class='fa fa-edit'></i>
+                                                    </button>
+                                                    <button class='btn btn-danger btn-sm delete btn-flat'
+                                                        onclick="DeleteBudget('<?php echo $fetch['id']?>')"><i
+                                                            class=' fa fa-trash'></i> </button>
+                                                </span>
                             </div>
-                            <!-- /.col -->
+                            </td>
+                            </tr>
+                            <?php $row++;
+                  }?>
+                            </tbody>
+                            </table>
                         </div>
-                        <!-- /.row -->
+                        <!-- /.card-body -->
                 </div>
-                <!-- /.container-fluid -->
-                </section>
-                <!-- /.content -->
+                <!-- /.card -->
             </div>
-            <!-- /.content-wrapper -->
-            <footer class="main-footer">
-                <div class="float-right d-none d-sm-block">
-                    <b>Version</b> 3.2.0
-                </div>
-                <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
-                reserved.
-            </footer>
+            <!-- /.col -->
+    </div>
+    <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="float-right d-none d-sm-block">
+            <b>Version</b> 3.2.0
+        </div>
+        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
+        reserved.
+    </footer>
     </div>
     <!-- ./wrapper -->
     <!-- REQUIRED SCRIPTS -->
@@ -397,7 +397,6 @@ if(!isset($_SESSION["username"]))
         });
     });
     </script>
-
     <script>
     function adddata() {
         var md_idAdd = $('#md_id').val();
@@ -428,7 +427,7 @@ if(!isset($_SESSION["username"]))
         }
         else{
         $.ajax({
-            url: "budget_add.php",
+            url: "expense_add.php",
             type: 'post',
             data: {
                 md_idSend: md_idAdd,
@@ -450,6 +449,7 @@ if(!isset($_SESSION["username"]))
         })
     }
 }
+
     function DeleteBudget(deleteid) {
         swal.fire({
             title: 'คุณแน่ใจรึเปล่า?',
@@ -463,7 +463,7 @@ if(!isset($_SESSION["username"]))
         }).then((result) => {
             if (result.value) {
                 $.ajax({
-                    url: "budget_delete.php",
+                    url: "expense_delete.php",
                     type: 'post',
                     data: {
                         deletesend: deleteid
@@ -485,7 +485,7 @@ if(!isset($_SESSION["username"]))
     function GetDetails(updateid) {
         $('#hiddendata').val(updateid);
         $.ajax({
-            url: "budget_data.php",
+            url: "expense_data.php",
             method: "POST",
             data: {
                 updateid: updateid
@@ -497,7 +497,6 @@ if(!isset($_SESSION["username"]))
                 $('#updatemd_id').val(data.md_id);
                 $('#updateinstallment').val(data.installment);
                 $('#updateremarks').val(data.remarks);
-                //$('#insert').val("อัพเดท/แก้ไข");
                 $('#updateModal').modal('show');
 
             }
@@ -513,7 +512,7 @@ if(!isset($_SESSION["username"]))
         var remarksUpdate = $('#updateremarks').val();
 
         $.ajax({
-            url: "budget_update.php",
+            url: "expense_update.php",
             type: 'post',
             data: {
                 idSend: idupdate,
@@ -530,7 +529,7 @@ if(!isset($_SESSION["username"]))
                     showConfirmButton: false,
                     timer: 800
                 })
-                setTimeout(location.reload.bind(location), 800);
+                //setTimeout(location.reload.bind(location), 800);
             }
         })
     }

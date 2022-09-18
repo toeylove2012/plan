@@ -2,7 +2,7 @@
  include 'connect.php';
 	  if(isset($_POST['deletesend'])){
         $id=$_POST['deletesend'];
-        $sql = "SELECT amount,md_id FROM `running_balance` where `balance_type` = 1 and `id` = '$id'";
+        $sql = "SELECT amount,md_id FROM `running_balance` where `balance_type` = 2 and `id` = '$id'";
         $result=mysqli_query($con,$sql);
         while($row = mysqli_fetch_array($result)){
           $budgetout = $row['amount'];
@@ -14,7 +14,7 @@
         while($row2 = mysqli_fetch_array($result2)){
           $budget = $row2['balance'];
         }
-        $budget -= $budgetout;
+        $budget += $budgetout;
         $sql3 = "UPDATE money_detail SET balance='$budget' WHERE md_id='$md_id';";
         $result3=mysqli_query($con,$sql3);
         
