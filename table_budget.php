@@ -228,15 +228,17 @@ if(!isset($_SESSION["username"]))
       $sql1 = "SELECT installment,id FROM `running_balance` WHERE md_id = $md_id Group by md_id,installment"; 
 		  $result1 = mysqli_query($con,$sql1);
       
-			while($row1 = mysqli_fetch_assoc($result1)) {
-      $installment = $row1['installment'];
-      //$mv_installment = $r;
-        $sql2 = "SELECT sum(amount) as total FROM `running_balance` WHERE md_id = $md_id AND installment = $installment Group by md_id,installment order by md_id,installment";
-        $result2 = mysqli_query($con,$sql2);
-        while($row2 = mysqli_fetch_assoc($result2)) {
-        $sum = $row2['total'];
-		  ?>
-                                                        <td><?php 
+	while($row1 = mysqli_fetch_assoc($result1)) 
+	{
+      		$mv_installment = $r;
+        	// $sql2 = "SELECT sum(mv_price) as total FROM `money_value` WHERE md_id = $md_id AND mv_installment = $mv_installment";
+		$sql2="SELECT sum(mv_price) as total ,md_id,mv_installment FROM money_value WHERE md_id = $md_id AND mv_installment = $mv_installment GROUP BY md_id,mv_installment ORDER BY md_id,mv_installment";
+        	$result2 = mysqli_query($con,$sql2);
+        	while($row2 = mysqli_fetch_assoc($result2)) 
+		{
+        		$sum = $row2['total'];
+		  ?>          
+      <td><?php 
       //echo number_format($sum,2)</td>
       //echo $row2['total'];
       //echo "T";
