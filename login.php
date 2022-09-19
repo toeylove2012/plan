@@ -44,16 +44,6 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-8">
-                <div id="error"></div>
-                  <div class="icheck-primary">
-                    <input type="checkbox" id="remember">
-                    <label for="remember">
-                      จดจำฉัน
-                    </label>
-                  </div>
-                </div>
                 <!-- /.col -->
                 <div class="col-4">
                 <button type="button" class="btn btn-primary btn-block" name="login" id="login">
@@ -65,13 +55,6 @@
                 
               </div>
             </form>
-      
-            <p class="mb-1">
-              <a href="forgot-password">ลืมรหัสผ่าน?</a>
-            </p>
-            <p class="mb-0">
-              <a href="register" class="text-center">สมัครสมาชิก</a>
-            </p>
           </div>
           <!-- /.login-card-body -->
         </div>
