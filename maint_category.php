@@ -81,7 +81,7 @@ if(!isset($_SESSION["username"]))
                 </li>
                 <li class="dropdown user user-menu open">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-                        <img src="imgs/profile.png" alt="Avatar" class="avatar">
+                        <img src="imgs/profile/profile.png" alt="Avatar" class="avatar">
                         <span
                             class="hidden-xs"><?php echo $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] ?></span>
                     </a>
