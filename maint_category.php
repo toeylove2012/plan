@@ -90,7 +90,7 @@ if(!isset($_SESSION["username"]))
                             <i class="fas fa-user"></i> Profile
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a href="logout" class="dropdown-item">
+                        <a href="logout.php" class="dropdown-item">
                             <i class="fas fa-sign-out-alt"></i> Sign out
                         </a>
                         <div>
