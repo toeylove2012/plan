@@ -176,14 +176,19 @@ require 'connect.php';
         </div>
         <?php 
         //budget
-        $sqlQuery = "SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 1 UNION SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
-        $result = mysqli_query($con,$sqlQuery);
-        //$chart_data="";
-            while ($row = mysqli_fetch_array($result)) { 
+        $sumbudget = "SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 1";
+        $sumexpense = "SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
+        $result = mysqli_query($con,$sumbudget);
+            while ($row = mysqli_fetch_array($sumbudget)) { 
     
-                $total[]  = $row['total'];
+                $totalbudget = $row['total'];
             }
+        $result = mysqli_query($con,$sumexpense);
+        while ($row1 = mysqli_fetch_array($sumbudget)) { 
     
+          $totalexpense = $row1['total'];
+      }
+      $totalbudget += $totalexpense;
         ?>
         
         <!-- Donut CHART -->
@@ -266,7 +271,7 @@ require 'connect.php';
       labels:['งบคงเหลือ','เบิกจ่าย'],
       datasets: [
         {
-          data:<?php echo json_encode($total); ?>,
+          data:<?php echo json_encode($totalbudget); ?>,
           backgroundColor : ['#0055ff', '#ff0000', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
         }
       ]
