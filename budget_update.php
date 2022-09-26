@@ -6,10 +6,9 @@ $id = mysqli_real_escape_string($con, $_POST["idSend"]);
 $amount = mysqli_real_escape_string($con, $_POST["amountSend"]);
       $remarks = mysqli_real_escape_string($con, $_POST["remarksSend"]);
       $balance_type = mysqli_real_escape_string($con, $_POST["balance_typeSend"]);
-      $installment = mysqli_real_escape_string($con, $_POST["installmentSend"]);
       $md_id = mysqli_real_escape_string($con, $_POST["md_idSend"]);
       $sql = "  
-           UPDATE running_balance SET balance_type='$balance_type', md_id='$md_id', amount='$amount', remarks='$remarks', m_id='$m_id', installment='$installment' WHERE id='$id';";
+           UPDATE running_balance SET balance_type='$balance_type', md_id='$md_id', amount='$amount', remarks='$remarks', m_id='$m_id' WHERE id='$id';";
            $result = mysqli_query($con, $sql) or die ("Error in query: $sql " . mysqli_error()); 
            $sql1 = "SELECT SUM(amount) as total FROM `running_balance` where `balance_type` = 1 and `md_id` = '$md_id' ";
            $result1 = mysqli_query($con, $sql1);

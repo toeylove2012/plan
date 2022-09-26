@@ -170,6 +170,22 @@ if(!isset($_SESSION["username"]))
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
+                                                            <div class="form-group">
+                                                                    <label for="moneytype"
+                                                                        class="col-form-label">ชื่อหมวดงบ</label>
+                                                                    <select name="mt_id" id="mt_id"
+                                                                        class="custom-select selevt">
+                                                                        <?php require 'connect.php';
+				                       $sql = "SELECT * FROM `money_type`";
+				                       $query = mysqli_query($con, $sql);?>
+                                                                        <option value="" selected hidden>
+                                                                            เลือกหมวดงบ</option>
+                                                                        <?php while($result = mysqli_fetch_assoc($query)): ?>
+                                                                        <option value="<?=$result['mt_id']?>">
+                                                                            <?=$result['mt_name']?></option>
+                                                                        <?php endwhile; ?>
+                                                                    </select>
+                                                                </div>
                                                                 <div class="form-group">
                                                                     <label for="moneytype"
                                                                         class="col-form-label">โครงการ/รายการ</label>
@@ -184,7 +200,8 @@ if(!isset($_SESSION["username"]))
                                while($row2 = mysqli_fetch_array($result2))
                                {
                                $md_id = $row2['md_id'];
-                               $options = $options."<option value='$md_id'>$row2[2]</option>";
+                               $balance = $row2['balance'];
+                               $options = $options."<option value='$md_id'>$row2[2] [$balance]</option>";
                                }
 					                   ?>
                                                                         <?php echo $options;?>
@@ -197,21 +214,7 @@ if(!isset($_SESSION["username"]))
                                                                         oninput="this.value = this.value.replace(/\D+/g, '')"
                                                                         class="form-control text-right number"
                                                                         id="amount" name="amount" require
-                                                                        pattern="[0-9]+" min="0">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="md-name"
-                                                                        class="col-form-label">งวด</label>
-                                                                    <select id="installment"
-                                                                        class="custom-select selevt">>
-                                                                        <option value="" selected hidden>เลือกงวด
-                                                                        </option>
-                                                                        <?php 
-                                                                            for($i=1;$i<=12;$i++){
-                                                                              echo "<option value='$i'>งวด $i</option>";
-                                                                            }
-                                                                            ?>
-                                                                    </select>
+                                                                        pattern="[0-9]+" min="0" max="<?php echo $balance ?>">
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="remarks-text"
@@ -222,6 +225,7 @@ if(!isset($_SESSION["username"]))
                                                                 <input type="hidden" name="md_id" id="md_id" />
                                                                 <input type="hidden" name="balance_type"
                                                                     id="balance_type" value="2" />
+                                                                    <input type="hidden" name="balance" id="balance" value="<?php echo $balance ?>"/>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-primary"
@@ -241,7 +245,7 @@ if(!isset($_SESSION["username"]))
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">
-                                                            ตั้งงบประมาณ</h5>
+                                                            แก้ไข</h5>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -251,7 +255,7 @@ if(!isset($_SESSION["username"]))
                                                         <div class="form-group">
                                                             <label for="moneytype"
                                                                 class="col-form-label">โครงการ/รายการ</label>
-                                                            <select name="updatemd_id" id="updatemd_idmd_id"
+                                                            <select name="updatemd_id" id="updatemd_id"
                                                                 class="custom-select selevt">
                                                                 <?php require 'connect.php';
 				                       $query = "SELECT * FROM `money_detail`";
@@ -282,8 +286,6 @@ if(!isset($_SESSION["username"]))
                                                         </div>
                                                         <input type="hidden" name="updateid" id="updateid" />
                                                         <input type="hidden" name="updatemd_id" id="updatemd_id" />
-                                                        <input type="hidden" name="updateinstallment"
-                                                            id="updateinstallment" />
                                                         <input type="hidden" name="updatebalance_type"
                                                             id="updatebalance_type" value="2" />
                                                     </div>
@@ -303,7 +305,6 @@ if(!isset($_SESSION["username"]))
                                         <tr>
                                             <th class="text-center">#</th>
                                             <th>วันที่</th>
-                                            <th>งวด</th>
                                             <th>โครงการ/รายการ</th>
                                             <th>จำนวน</th>
                                             <th>รายละเอียด</th>
@@ -319,7 +320,6 @@ if(!isset($_SESSION["username"]))
                                         <tr>
                                             <td class="text-center"><?php echo $row?></td>
                                             <td><?php echo $fetch['date_created']?></td>
-                                            <td><?php echo $fetch['installment']?></td>
                                             <td><?php echo $fetch['md_name']?></td>
                                             <td><?php
                     $amount = $fetch['amount'];
@@ -390,6 +390,28 @@ if(!isset($_SESSION["username"]))
     <!-- Sweetalert2 -->
     <script src="libs/js/sweetalert2.all.js"></script>
     <!--  -->
+            <script>
+    $(function() {
+                var moneytypeObject = $('#mt_id');
+                var moneydetailObject = $('#md_id');
+
+                // on change province
+                moneytypeObject.on('change', function() {
+                    var moneytypeId = $(this).val();
+
+                    moneydetailObject.html('<option value="">เลือกโครงการ</option>');
+
+                    $.get('get_moneydetail.php?mt_id=' + moneytypeId, function(data) {
+                        var result = JSON.parse(data);
+                        $.each(result, function(index, item) {
+                            moneydetailObject.append(
+                                $('<option></option>').val(item.md_id).html(item.md_name)
+                            );
+                        });
+                    });
+                });
+            });
+    </script>
     <script>
     $(document).ready(function() {
         $('input[inputmode="numeric"]').change(function() {
@@ -402,7 +424,7 @@ if(!isset($_SESSION["username"]))
         var md_idAdd = $('#md_id').val();
         var balance_typeAdd = $('#balance_type').val();
         var amountAdd = $('#amount').val();
-        var installmentAdd = $('#installment').val();
+        var balanceAdd = $('#balance').val();
         var remarksAdd = $('#remarks').val();
         if (md_idAdd === "") {
             Swal.fire({
@@ -418,11 +440,18 @@ if(!isset($_SESSION["username"]))
                     text: 'กรุณาเลือกใส่จำนวนให้เงินครบ'
                 })
         }
-        else if(installmentAdd === ""){
+        else if(amountAdd > balanceAdd){
             Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'กรุณาเลือกงวด'
+                    text: 'กรุณาใส่ราคาเบิกเท่าที่งบมี'
+                })
+        }
+        else if(amountAdd <= 0){
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'กรุณาใส่ราคาเบิกที่ถูกต้อง'
                 })
         }
         else{
@@ -433,7 +462,6 @@ if(!isset($_SESSION["username"]))
                 md_idSend: md_idAdd,
                 balance_typeSend: balance_typeAdd,
                 amountSend: amountAdd,
-                installmentSend: installmentAdd,
                 remarksSend: remarksAdd
             },
             success: function(data) {
@@ -495,7 +523,6 @@ if(!isset($_SESSION["username"]))
                 $('#updateid').val(data.id);
                 $('#updateamount').val(data.amount);
                 $('#updatemd_id').val(data.md_id);
-                $('#updateinstallment').val(data.installment);
                 $('#updateremarks').val(data.remarks);
                 $('#updateModal').modal('show');
 
@@ -508,7 +535,6 @@ if(!isset($_SESSION["username"]))
         var md_idUpdate = $('#updatemd_id').val();
         var balance_typeUpdate = $('#updatebalance_type').val();
         var amountUpdate = $('#updateamount').val();
-        var installmentUpdate = $('#updateinstallment').val();
         var remarksUpdate = $('#updateremarks').val();
 
         $.ajax({
@@ -519,7 +545,6 @@ if(!isset($_SESSION["username"]))
                 md_idSend: md_idUpdate,
                 balance_typeSend: balance_typeUpdate,
                 amountSend: amountUpdate,
-                installmentSend: installmentUpdate,
                 remarksSend: remarksUpdate
             },
             success: function(data) {

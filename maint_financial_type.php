@@ -130,12 +130,12 @@ if(!isset($_SESSION["username"]))
                         <div class="container-fluid">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <h1 class="m-0">จัดการโครงการ</h1>
+                                    <h1 class="m-0">จัดการหมวดงบ</h1>
                                 </div><!-- /.col -->
                                 <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
                                         <li class="breadcrumb-item"><a href="index">หน้าแรก</a></li>
-                                        <li class="breadcrumb-item active">จัดการโครงการ</li>
+                                        <li class="breadcrumb-item active">จัดการหมวดงบ</li>
                                     </ol>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->
@@ -187,76 +187,12 @@ if(!isset($_SESSION["username"]))
                                                                 <div class="modal-body">
                                                                     <form method="post" id="insert_form">
                                                                         <div class="form-group">
-                                                                            <label for="moneytype"
-                                                                                class="col-form-label">ชื่อหมวดงบ</label>
-                                                                            <select onchange="yesnoCheck(this);"
-                                                                                name="mt_id" id="mt_id"
-                                                                                class="custom-select selevt">
-                                                                                <?php require 'connect.php';
-				                       $sql = "SELECT * FROM `money_type`";
-				                       $query = mysqli_query($con, $sql);?>
-                                                                                <option value="" selected hidden>
-                                                                                    เลือกหมวดงบ</option>
-                                                                                <?php while($result = mysqli_fetch_assoc($query)): ?>
-                                                                                <option value="<?=$result['mt_id']?>">
-                                                                                    <?=$result['mt_name']?></option>
-                                                                                <?php endwhile; ?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div id="ifYes" style="display: none;">
-                                                                            <label for="grade"
-                                                                                class="col-form-label">ระดับชั้น</label>
-                                                                            <select name="grade_id" id="grade_id"
-                                                                                class="custom-select selevt">
-                                                                                <?php $sql2 = "SELECT * FROM `grade`";
-				                                                                  $query2 = mysqli_query($con, $sql2);?>?>
-                                                                                <option value="" selected hidden>
-                                                                                    เลือกระดับชั้น</option>
-                                                                                <?php while($result2 = mysqli_fetch_assoc($query2)): ?>
-                                                                                <option
-                                                                                    value="<?=$result2['grade_id']?>">
-                                                                                    <?=$result2['grade_name']?></option>
-                                                                                <?php endwhile; ?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div id="ifYes2" style="display: none;">
-                                                                            <label for="financial_type"
-                                                                                class="col-form-label">ค่า</label>
-                                                                            <select name="f_id" id="f_id"
-                                                                                class="custom-select selevt">
-                                                                                <?php $sql3 = "SELECT * FROM `financial_type`";
-				                                                                  $query3 = mysqli_query($con, $sql3);?>?>
-                                                                                <option value="" selected hidden>
-                                                                                    เลือกค่าต่างๆ</option>
-                                                                                <?php while($result3 = mysqli_fetch_assoc($query3)): ?>
-                                                                                <option value="<?=$result3['f_id']?>">
-                                                                                    <?=$result3['f_name']?></option>
-                                                                                <?php endwhile; ?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="form-group">
                                                                             <label for="md-name"
                                                                                 class="col-form-label">ชื่อโครงการ/รายการ</label>
                                                                             <input type="text" class="form-control"
-                                                                                id="md_name" name="md_name" require>
+                                                                                id="f_name" name="f_name" require>
                                                                         </div>
-                                                                        <div class="form-group">
-                                                                            <label for="description-text"
-                                                                                class="col-form-label">รายละเอียด</label>
-                                                                            <textarea class="form-control"
-                                                                                id="description"
-                                                                                name="description"></textarea>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label for="status"
-                                                                                class="col-form-label">สถานะ</label>
-                                                                            <select name="status" id="status"
-                                                                                class="custom-select selevt">
-                                                                                <option value="1">เปิดใช้งาน</option>
-                                                                                <option value="0">ปิดใช้งาน</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <input type="hidden" name="md_id" id="md_id" />
+                                                                        <input type="hidden" name="f_id" id="f_id" />
                                                                         <input type="submit" name="insert" id="insert"
                                                                             value="Insert" class="btn btn-success" />
                                                                     </form>
@@ -279,46 +215,29 @@ if(!isset($_SESSION["username"]))
                                                         <th class="text-center">#</th>
                                                         <th>วันที่</th>
                                                         <th>หมวดงบ</th>
-                                                        <th>ประเภทการเงิน</th>
-                                                        <th>โครงการ/รายการ</th>
-                                                        <th>รายละเอียด</th>
-                                                        <th>สถานะ</th>
                                                         <th>จัดการ</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php require 'connect.php';
-				$query = $con->query("SELECT money_detail.md_id, money_type.mt_id, money_detail.md_name, money_detail.description, money_detail.status, money_detail.grade_id, money_detail.f_id, money_detail.date_created, money_detail.date_updated, money_type.mt_name, financial_type.f_name FROM money_detail JOIN money_type ON money_detail.mt_id = money_type.mt_id LEFT JOIN financial_type ON money_detail.f_id = financial_type.f_id;");
+				$query = $con->query("SELECT * FROM financial_type");
                 $row = 1;
 				while($fetch = $query->fetch_array()){
-          $status = $fetch['status'];
-          $f_id = $fetch['f_id'];
 					?>
                                                     <tr>
                                                         <td class="text-center"><?php echo $row?></td>
                                                         <td><?php echo $fetch['date_created']?></td>
-                                                        <td><?php echo $fetch['mt_name']?></td>
                                                         <td><?php echo $fetch['f_name']?></td>
-                                                        <td><?php echo $fetch['md_name']?></td>
-                                                        <td><?php echo $fetch['description']?></td>
-                                                        <td class="text-center"><?php 
-                      if($status==1){
-                        echo "<span class='badge badge-success'>เปิดใช้งาน</span>";
-                      }
-                      else{
-                        echo "<span class='badge badge-danger'>ปิดใช้งาน</span>";
-                     }
-                  ?></td>
                                                         <td class="text-center"><span>
                                                                 <button
                                                                     class='btn btn-primary btn-sm edit btn-flat edit_data'
                                                                     name="edit" value="Edit"
-                                                                    id="<?php echo $fetch['md_id']?>"><i
+                                                                    id="<?php echo $fetch['f_id']?>"><i
                                                                         class='fa fa-edit'></i> </button>
                                                                 <button
                                                                     class='btn btn-danger btn-sm delete btn-flat delete_data'
                                                                     name="delete" value="delelte"
-                                                                    id="<?php echo $fetch['md_id']?>"><i
+                                                                    id="<?php echo $fetch['f_id']?>"><i
                                                                         class='fa fa-trash'></i> </button>
                                                             </span>
                                         </div>
@@ -378,26 +297,6 @@ if(!isset($_SESSION["username"]))
     <!-- Sweetalert2 -->
     <script src="libs/js/sweetalert2.all.js"></script>
     <script>
-    function yesnoCheck(that) {
-        if (that.value == "6") {
-            document.getElementById("ifYes").style.display = "block";
-        } else {
-            document.getElementById("ifYes").style.display = "none";
-            $('#ifYes option').prop('selected', function() {
-                return this.defaultSelected;
-            });
-        }
-        if (that.value == "1") {
-            document.getElementById("ifYes2").style.display = "block";
-        } else {
-            document.getElementById("ifYes2").style.display = "none";
-            $('#ifYes2 option').prop('selected', function() {
-                return this.defaultSelected;
-            });
-        }
-    }
-    </script>
-    <script>
     $(document).ready(function() {
         $('input[type="text"]').change(function() {
             this.value = $.trim(this.value);
@@ -405,37 +304,20 @@ if(!isset($_SESSION["username"]))
         $('#add').click(function() {
             $('#insert').val("เพิ่มข้อมูล");
             $('#insert_form')[0].reset();
-            $('#md_id').val("");
+            $('#f_id').val("");
         });
         $(document).on('click', '.edit_data', function() {
-            var md_id = $(this).attr("id");
+            var f_id = $(this).attr("id");
             $.ajax({
-                url: "users_data.php",
+                url: "maint_financial_type_data.php",
                 method: "POST",
                 data: {
-                    md_id: md_id
+                    f_id: f_id
                 },
                 dataType: "json",
                 success: function(data) {
-                    $('#mt_id').val(data.mt_id);
-                    $('#md_name').val(data.md_name);
-                    $('#description').val(data.description);
-                    $('#status').val(data.status);
-                    $('#grade_id').val(data.grade_id);
                     $('#f_id').val(data.f_id);
-                    resultString1 = data.grade_id;
-                    resultString2 = data.f_id;
-                    if (resultString1 == "0") {
-                        $('#ifYes').css("display", "none");
-                    } else {
-                        $('#ifYes').css("display", "block");
-                    }
-                    if (resultString2 == "0") {
-                        $('#ifYes2').css("display", "none");
-                    } else {
-                        $('#ifYes2').css("display", "block");
-                    }
-                    $('#md_id').val(data.md_id);
+                    $('#f_name').val(data.f_name);
                     $('#insert').val("อัพเดท/แก้ไข");
                     $('#add_data_Modal').modal('show');
                 }
@@ -443,33 +325,16 @@ if(!isset($_SESSION["username"]))
         });
         $('#insert_form').on("submit", function(event) {
             event.preventDefault();
-            if ($('#md_name').val() === "") {
+            if ($('#f_name').val() === "") {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'กรุณากรอกชื่อโครงการ!',
+                    text: 'กรุณากรอกชื่อหมวด!',
                 })
-            } else if ($('#mt_id').val() === "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาเลือกหมวดงบ!',
-                })
-            } else if ($('#mt_id').val() == "1" && $('#f_id').val() === "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาเลือกค่า!',
-                })
-            } else if ($('#mt_id').val() == "6" && $('#grade_id').val() === "") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาเลือกระดับชั้น!',
-                })
-            } else {
+            } 
+             else {
                 $.ajax({
-                    url: "users_add.php",
+                    url: "maint_financial_type_add.php",
                     method: "POST",
                     data: $('#insert_form').serialize(),
                     beforeSend: function() {
@@ -485,8 +350,8 @@ if(!isset($_SESSION["username"]))
             }
         });
         $(document).on('click', '.delete_data', function() {
-            var md_id = $(this).attr("id");
-            if (md_id != '') {
+            var f_id = $(this).attr("id");
+            if (f_id != '') {
                 swal.fire({
                     title: 'คุณแน่ใจรึเปล่า?',
                     text: "คุณจะไม่สามารถย้อนกลับได้!",
@@ -499,10 +364,10 @@ if(!isset($_SESSION["username"]))
                 }).then((result) => {
                     if (result.value) {
                         $.ajax({
-                            url: "users_delete.php",
+                            url: "maint_financial_type_delete.php",
                             method: "POST",
                             data: {
-                                md_id: md_id
+                                f_id: f_id
                             },
                             dataType: "json"
                         })

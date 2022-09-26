@@ -64,10 +64,26 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="drop_table.php" class="nav-link">
-                <i class="fas fa-database"></i>
+            <a href="maint_moneytype.php" class="nav-link">
+                <i class="nav-icon fas fa-coins"></i>
                 <p>
-                     Database
+                    จัดการหมวดงบ
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="maint_financial_type.php" class="nav-link">
+            <i class="nav-icon fas fa-file-invoice"></i>
+                <p>
+                    จัดการค่าอื่นๆ
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="drop_table.php" class="nav-link">
+                <i class="nav-icon fas fa-database"></i>
+                <p>
+                    Database
                 </p>
             </a>
         </li>

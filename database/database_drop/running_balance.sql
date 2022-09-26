@@ -5,7 +5,6 @@ CREATE TABLE `running_balance` (
   `md_id` int(14) NOT NULL,
   `amount` float NOT NULL,
   `remarks` text NOT NULL,
-  `installment` int(12) NOT NULL,
   `m_id` text NOT NULL,
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp(),

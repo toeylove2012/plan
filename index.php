@@ -176,25 +176,48 @@ require 'connect.php';
         </div>
         <?php 
         //budget
-        $sumbudget = "SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 1";
-        $sumexpense = "SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
-        $result = mysqli_query($con,$sumbudget);
-            while ($row = mysqli_fetch_array($sumbudget)) { 
+        $sqlQuery = "SELECT sum(balance) as total FROM money_detail where status = 1 UNION SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
+        $result = mysqli_query($con,$sqlQuery);
+            while ($row = mysqli_fetch_array($result)) { 
     
-                $totalbudget = $row['total'];
+                $total[]  = $row['total'];
             }
-        $result = mysqli_query($con,$sumexpense);
-        while ($row1 = mysqli_fetch_array($sumbudget)) { 
     
-          $totalexpense = $row1['total'];
-      }
-      $totalbudget += $totalexpense;
         ?>
-        
+        <!-- moneytype -->
+        <?php 
+        $sqlQuery2 = "SELECT mt_name FROM money_type ";
+        $result2 = mysqli_query($con,$sqlQuery2);
+            while ($row2 = mysqli_fetch_array($result2)) { 
+    
+                $label[]  = $row2['mt_name'];
+            }
+    
+        ?>
+        <!-- sum งบประมาณ หมวดงบ -->
+        <?php 
+        $sqlQuery3 = "SELECT mt_id,SUM(balance) As SumTotal FROM money_detail where status = 1 GROUP BY mt_id ";
+        $result3 = mysqli_query($con,$sqlQuery3);
+            while ($row3 = mysqli_fetch_array($result3)) { 
+    
+                $summoneytype[]  = $row3['SumTotal'];
+            }
+    
+        ?>
+        <!-- sum เบิกจ่ายงบประมาณ หมวดงบ -->
+        <?php 
+        $sqlQuery4 = "SELECT mt_id, sum(amount) as SumExpense FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2 GROUP BY mt_id ";
+        $result4 = mysqli_query($con,$sqlQuery4);
+            while ($row4 = mysqli_fetch_array($result4)) { 
+    
+                $sumexpensemt[]  = $row4['SumExpense'];
+            }
+    
+        ?>
         <!-- Donut CHART -->
             <div class="card card-info">
               <div class="card-header">
-                <h3 class="card-title">แผนภูมิงบประมาณคงเหลือและเบิกจ่าย</h3>
+                <h3 class="card-title">งบประมาณคงเหลือและเบิกจ่ายทั้งหมด</h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -206,8 +229,30 @@ require 'connect.php';
                 </div>
               </div>
               <div class="card-body">
-              <h2 class="page-header text-center" >แผนภูมิงบประมาณคงเหลือและเบิกจ่าย</h2>
+              <h2 class="page-header text-center" >งบประมาณคงเหลือและเบิกจ่ายทั้งหมด</h2>
                 <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- BAR CHART -->
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">หมวดงบคงเหลือและการเบิกจ่าย</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
               </div>
               <!-- /.card-body -->
             </div>
@@ -260,7 +305,7 @@ require 'connect.php';
 <!-- AdminLTE App -->
 <script src="libs/js/adminlte.min.js"></script>
 <script src="plugins/chart.js/Chart.min.js"></script>
-<script type="text/javascript">
+<script>
   $(function () {
       //-------------
     //- DONUT CHART -
@@ -271,7 +316,7 @@ require 'connect.php';
       labels:['งบคงเหลือ','เบิกจ่าย'],
       datasets: [
         {
-          data:<?php echo json_encode($totalbudget); ?>,
+          data:<?php echo json_encode($total); ?>,
           backgroundColor : ['#0055ff', '#ff0000', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
         }
       ]
@@ -305,6 +350,58 @@ require 'connect.php';
       data: pieData,
       options: pieOptions
     })
+                });
+    </script>
+      <script>
+    $(function () {
+//-------------
+    //- BAR CHART -
+    //-------------
+    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+    var barChartData = {
+      labels  : <?php echo json_encode($label); ?>,
+      datasets: [
+        {
+          label               : 'เบิกจ่าย',
+          backgroundColor     : '#ff0000',
+          borderColor         : '#ff0000',
+          pointRadius          : false,
+          pointColor          : '#3b8bba',
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data                : <?php echo json_encode($sumexpensemt); ?>
+        },
+        {
+          label               : 'งบคงเหลือ',
+          backgroundColor     : '#0055ff',
+          borderColor         : '#0055ff',
+          pointRadius         : false,
+          pointColor          : 'rgba(210, 214, 222, 1)',
+          pointStrokeColor    : '#c1c7d1',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(220,220,220,1)',
+          data                : <?php echo json_encode($summoneytype); ?>
+        },
+      ]
+    }
+    var temp0 = barChartData.datasets[0]
+    var temp1 = barChartData.datasets[1]
+    barChartData.datasets[0] = temp1
+    barChartData.datasets[1] = temp0
+
+    var barChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      datasetFill             : false
+    }
+
+    new Chart(barChartCanvas, {
+      type: 'bar',
+      data: barChartData,
+      options: barChartOptions
+    })
+
                 });
     </script>
 </body>

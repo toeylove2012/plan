@@ -5,11 +5,10 @@
 	  $amount = mysqli_real_escape_string($con, $_POST["amountSend"]);
       $remarks = mysqli_real_escape_string($con, $_POST["remarksSend"]);
       $balance_type = mysqli_real_escape_string($con, $_POST["balance_typeSend"]);
-      $installment = mysqli_real_escape_string($con, $_POST["installmentSend"]);
       $md_id = mysqli_real_escape_string($con, $_POST["md_idSend"]);
            $sql1 = "  
-           INSERT INTO running_balance(balance_type, md_id, amount, remarks, m_id, installment)  
-           VALUES('$balance_type', '$md_id', '$amount', '$remarks', '$m_id', $installment);  
+           INSERT INTO running_balance(balance_type, md_id, amount, remarks, m_id)  
+           VALUES('$balance_type', '$md_id', '$amount', '$remarks', '$m_id');  
            ";
            $result1 = mysqli_query($con, $sql1) or die ("Error in query: $sql1 " . mysqli_error()); 
 
