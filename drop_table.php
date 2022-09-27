@@ -158,9 +158,6 @@ mysqli_close($con);
 			</div>
 		</div>
 
-	</div>
-</div>
-
   <div class="modal fade" id="alert1" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -184,8 +181,6 @@ mysqli_close($con);
         </div>
 </form>
       </div>
-    </div>
-  </div>
   
    <!-- jQuery -->
    <script src="plugins/jquery/jquery.min.js"></script>

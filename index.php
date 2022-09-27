@@ -56,7 +56,7 @@ require 'connect.php';
       <img src="imgs/profile/profile.png" alt="Avatar" class="avatar">
       <span class="hidden-xs"><?php echo $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] ?></span>
           </a>
-          <div class="dropdown-menu dropdown-menu dropdown-menu-right">
+          <div class="dropdown-menu dropdown-menu-right">
           <a href="#" class="dropdown-item">
           <i class="fas fa-user"></i> Profile
           </a>
