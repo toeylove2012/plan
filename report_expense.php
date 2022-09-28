@@ -74,24 +74,10 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <div class="brand-link">
-      <img src="imgs/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">BNCC Budgetplan</span>
-</div>
+    <?php include 'logo.php';?>
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <!-- SidebarSearch Form -->
-      <div class="form-inline">
-        <div class="input-group" data-widget="sidebar-search">
-          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-          <div class="input-group-append">
-            <button class="btn btn-sidebar">
-              <i class="fas fa-search fa-fw"></i>
-            </button>
-          </div>
-        </div>
-      </div>
       <?php include 'sidebarmenu.php';?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -135,7 +121,6 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
         <hr>
         <div id="printable">
             <div>
-                <h4 class="text-center m-0"><?php //echo $_settings->info('name') ?></h4>
                 <h3 class="text-center m-0"><b>รายงานงบประมาณ</b></h3>
                 <hr style="width:15%">
                 <p class="text-center m-0">ระหว่างวันที่ <b><?php echo date("M d, Y",strtotime($date_start)) ?> ถึงวันที่ <?php echo date("M d, Y",strtotime($date_end)) ?></b></p>
