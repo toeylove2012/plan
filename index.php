@@ -171,7 +171,8 @@ require 'connect.php';
                             </div>
                             <?php 
         //budget
-        $sqlQuery = "SELECT sum(balance) as total FROM money_detail where status = 1 UNION SELECT sum(amount) as total FROM money_detail  INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
+        $sqlQuery = "SELECT sum(balance) as total FROM money_detail where status = 1 UNION SELECT sum(amount) as total FROM money_detail  
+        INNER JOIN running_balance ON money_detail.md_id = running_balance.md_id where status = 1 AND balance_type = 2";
         $result = mysqli_query($con,$sqlQuery);
             while ($row = mysqli_fetch_array($result)) { 
                 $total[]  = $row['total'];

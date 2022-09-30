@@ -52,33 +52,6 @@ if(!isset($_SESSION["username"]))
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                                    aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt"></i>
-                    </a>
-                </li>
                 <li class="dropdown user user-menu open">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
                         <img src="imgs/profile/profile.png" alt="Avatar" class="avatar">
@@ -154,7 +127,7 @@ if(!isset($_SESSION["username"]))
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                            <div class="form-group">
+                                                                <div class="form-group">
                                                                     <label for="moneytype"
                                                                         class="col-form-label">ชื่อหมวดงบ</label>
                                                                     <select name="mt_id" id="mt_id"
@@ -177,18 +150,6 @@ if(!isset($_SESSION["username"]))
                                                                         class="custom-select selevt">
                                                                         <option value="" selected hidden>เลือกรายการ
                                                                         </option>
-                                                                        <?php require 'connect.php';
-				                       $query = "SELECT * FROM `money_detail` where `balance` > 0 order by md_name asc";
-				                       $result2 = mysqli_query($con, $query);
-                               $options = "";
-                               while($row2 = mysqli_fetch_array($result2))
-                               {
-                               $md_id = $row2['md_id'];
-                               $balance = $row2['balance'];
-                               $options = $options."<option value='$md_id'>$row2[2] [$balance]</option>";
-                               }
-					                   ?>
-                                                                        <?php echo $options;?>
                                                                     </select>
                                                                 </div>
                                                                 <div class="form-group">
@@ -198,7 +159,8 @@ if(!isset($_SESSION["username"]))
                                                                         oninput="this.value = this.value.replace(/\D+/g, '')"
                                                                         class="form-control text-right number"
                                                                         id="amount" name="amount" require
-                                                                        pattern="[0-9]+" min="0" max="<?php echo $balance ?>">
+                                                                        pattern="[0-9]+" min="0"
+                                                                        max="">
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="remarks-text"
@@ -209,7 +171,8 @@ if(!isset($_SESSION["username"]))
                                                                 <input type="hidden" name="md_id" id="md_id" />
                                                                 <input type="hidden" name="balance_type"
                                                                     id="balance_type" value="2" />
-                                                                    <input type="hidden" name="balance" id="balance" value="<?php echo $balance ?>"/>
+                                                                <!--<input type="hidden" name="balance" id="balance"
+                                                                    value="" /> -->
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-primary"
@@ -270,6 +233,7 @@ if(!isset($_SESSION["username"]))
                                                         </div>
                                                         <input type="hidden" name="updateid" id="updateid" />
                                                         <input type="hidden" name="updatemd_id" id="updatemd_id" />
+                                                        <input type="hidden" name="updatebalance" id="updatebalance" />
                                                         <input type="hidden" name="updatebalance_type"
                                                             id="updatebalance_type" value="2" />
                                                     </div>
@@ -279,73 +243,73 @@ if(!isset($_SESSION["username"]))
                                                         <button type="button" class="btn btn-secondary"
                                                             data-dismiss="modal">ปิด</button>
                                                     </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">#</th>
-                                            <th>วันที่</th>
-                                            <th>โครงการ/รายการ</th>
-                                            <th>จำนวน</th>
-                                            <th>รายละเอียด</th>
-                                            <th>จัดการ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php require 'connect.php';
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <table id="example1" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">#</th>
+                                                        <th>วันที่</th>
+                                                        <th>โครงการ/รายการ</th>
+                                                        <th>จำนวน</th>
+                                                        <th>รายละเอียด</th>
+                                                        <th>จัดการ</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php require 'connect.php';
 				$query = $con->query("SELECT * FROM `running_balance` INNER JOIN `money_detail` ON running_balance.md_id = money_detail.md_id WHERE money_detail.status=1 and running_balance.balance_type=2 order by unix_timestamp(running_balance.date_created) desc");
         $row = 1;
 				while($fetch = $query->fetch_array()){
 					?>
-                                        <tr>
-                                            <td class="text-center"><?php echo $row?></td>
-                                            <td><?php echo $fetch['date_created']?></td>
-                                            <td><?php echo $fetch['md_name']?></td>
-                                            <td><?php
+                                                    <tr>
+                                                        <td class="text-center"><?php echo $row?></td>
+                                                        <td><?php echo $fetch['date_created']?></td>
+                                                        <td><?php echo $fetch['md_name']?></td>
+                                                        <td><?php
                     $amount = $fetch['amount'];
                     echo number_format($amount,2); ?></td>
-                                            <td><?php echo $fetch['remarks']?></td>
-                                            <td class="text-center"><span>
-                                                    <button class='btn btn-primary btn-sm edit btn-flat'
-                                                        onclick="GetDetails('<?php echo $fetch['id']?>')"><i
-                                                            class='fa fa-edit'></i>
-                                                    </button>
-                                                    <button class='btn btn-danger btn-sm delete btn-flat'
-                                                        onclick="DeleteBudget('<?php echo $fetch['id']?>')"><i
-                                                            class=' fa fa-trash'></i> </button>
-                                                </span>
-                            </div>
-                            </td>
-                            </tr>
-                            <?php $row++;
+                                                        <td><?php echo $fetch['remarks']?></td>
+                                                        <td class="text-center"><span>
+                                                                <button class='btn btn-primary btn-sm edit btn-flat'
+                                                                    onclick="GetDetails('<?php echo $fetch['id']?>')"><i
+                                                                        class='fa fa-edit'></i>
+                                                                </button>
+                                                                <button class='btn btn-danger btn-sm delete btn-flat'
+                                                                    onclick="DeleteBudget('<?php echo $fetch['id']?>')"><i
+                                                                        class=' fa fa-trash'></i> </button>
+                                                            </span>
+                                        </div>
+                                        </td>
+                                        </tr>
+                                        <?php $row++;
                   }?>
-                            </tbody>
-                            </table>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                            <!-- /.col -->
                         </div>
-                        <!-- /.card-body -->
+                        <!-- /.row -->
                 </div>
-                <!-- /.card -->
+                <!-- /.container-fluid -->
+                </section>
+                <!-- /.content -->
             </div>
-            <!-- /.col -->
-    </div>
-    <!-- /.row -->
-    </div>
-    <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-    <footer class="main-footer">
-        <div class="float-right d-none d-sm-block">
-            <b>Version</b> 3.2.0
-        </div>
-        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
-        reserved.
-    </footer>
+            <!-- /.content-wrapper -->
+            <footer class="main-footer">
+                <div class="float-right d-none d-sm-block">
+                    <b>Version</b> 3.2.0
+                </div>
+                <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
+                reserved.
+            </footer>
     </div>
     <!-- ./wrapper -->
     <!-- REQUIRED SCRIPTS -->
@@ -374,27 +338,28 @@ if(!isset($_SESSION["username"]))
     <!-- Sweetalert2 -->
     <script src="libs/js/sweetalert2.all.js"></script>
     <!--  -->
-            <script>
+    <script>
     $(function() {
-                var moneytypeObject = $('#mt_id');
-                var moneydetailObject = $('#md_id');
+        var moneytypeObject = $('#mt_id');
+        var moneydetailObject = $('#md_id');
 
-                // on change province
-                moneytypeObject.on('change', function() {
-                    var moneytypeId = $(this).val();
+        // on change province
+        moneytypeObject.on('change', function() {
+            var moneytypeId = $(this).val();
 
-                    moneydetailObject.html('<option value="">เลือกโครงการ</option>');
+            moneydetailObject.html('<option value="">เลือกโครงการ</option>');
 
-                    $.get('get_moneydetail.php?mt_id=' + moneytypeId, function(data) {
-                        var result = JSON.parse(data);
-                        $.each(result, function(index, item) {
-                            moneydetailObject.append(
-                                $('<option></option>').val(item.md_id).html(item.md_name)
-                            );
-                        });
-                    });
+            $.get('get_moneydetail.php?mt_id=' + moneytypeId, function(data) {
+                var result = JSON.parse(data);
+                $.each(result, function(index, item) {
+                    moneydetailObject.append(
+                        $('<option></option>').val(item.md_id).html(item.md_name),
+                        $('<input type="hidden" id="balance" name="balance"/>').val(item.balance)
+                    );
                 });
             });
+        }); 
+    });
     </script>
     <script>
     $(document).ready(function() {
@@ -412,55 +377,53 @@ if(!isset($_SESSION["username"]))
         var remarksAdd = $('#remarks').val();
         if (md_idAdd === "") {
             Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาเลือกโครงการ/รายการ'
-                })
-        }
-        else if(amountAdd === ""){
+                icon: 'error',
+                title: 'Oops...',
+                text: 'กรุณาเลือกโครงการ/รายการ'
+            })
+        } else if (amountAdd === "") {
             Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาเลือกใส่จำนวนให้เงินครบ'
-                })
-        }
-        else if(amountAdd > balanceAdd){
+                icon: 'error',
+                title: 'Oops...',
+                text: 'กรุณาเลือกใส่จำนวนให้เงินครบ'
+            })
+        } else if ((amountAdd - balanceAdd) > 0) {
             Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาใส่ราคาเบิกเท่าที่งบมี'
-                })
-        }
-        else if(amountAdd <= 0){
+                icon: 'error',
+                title: 'Oops...',
+                text: 'กรุณาใส่ราคาเบิกเท่าที่งบมี'
+            })
+            alert(amountAdd);
+            alert(balanceAdd);
+        } else if (amountAdd <= 0) {
             Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'กรุณาใส่ราคาเบิกที่ถูกต้อง'
-                })
+                icon: 'error',
+                title: 'Oops...',
+                text: 'กรุณาใส่ราคาเบิกที่ถูกต้อง'
+            })
+        } else {
+            $.ajax({
+                url: "expense_add.php",
+                type: 'post',
+                data: {
+                    md_idSend: md_idAdd,
+                    balance_typeSend: balance_typeAdd,
+                    amountSend: amountAdd,
+                    remarksSend: remarksAdd
+                },
+                success: function(data) {
+                    //function display data;
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 800
+                    })
+                    setTimeout(location.reload.bind(location), 800);
+                }
+            })
         }
-        else{
-        $.ajax({
-            url: "expense_add.php",
-            type: 'post',
-            data: {
-                md_idSend: md_idAdd,
-                balance_typeSend: balance_typeAdd,
-                amountSend: amountAdd,
-                remarksSend: remarksAdd
-            },
-            success: function(data) {
-                //function display data;
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 800
-                })
-                setTimeout(location.reload.bind(location), 800);
-            }
-        })
     }
-}
 
     function DeleteBudget(deleteid) {
         swal.fire({
@@ -506,6 +469,7 @@ if(!isset($_SESSION["username"]))
             success: function(data) {
                 $('#updateid').val(data.id);
                 $('#updateamount').val(data.amount);
+                $('#updatebalance').val(data.balance);
                 $('#updatemd_id').val(data.md_id);
                 $('#updateremarks').val(data.remarks);
                 $('#updateModal').modal('show');
@@ -518,9 +482,17 @@ if(!isset($_SESSION["username"]))
         var idupdate = $('#updateid').val();
         var md_idUpdate = $('#updatemd_id').val();
         var balance_typeUpdate = $('#updatebalance_type').val();
+        var balance = $('#updatebalance').val();
         var amountUpdate = $('#updateamount').val();
         var remarksUpdate = $('#updateremarks').val();
-
+        if (balance < amountUpdate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'กรุณาใส่ราคาเบิกเท่าที่งบมี'
+            })
+        }
+        else{
         $.ajax({
             url: "expense_update.php",
             type: 'post',
@@ -541,6 +513,7 @@ if(!isset($_SESSION["username"]))
                 //setTimeout(location.reload.bind(location), 800);
             }
         })
+    }
     }
     </script>
     <!-- Datatable-->
