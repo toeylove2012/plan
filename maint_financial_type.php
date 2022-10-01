@@ -307,7 +307,7 @@ if(!isset($_SESSION["username"]))
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'กรุณากรอกชื่อหมวด!',
+                    text: 'กรุณากรอกค่าอื่นๆ!',
                 })
             } 
              else {
