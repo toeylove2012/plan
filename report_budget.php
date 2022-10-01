@@ -148,7 +148,8 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                     require 'connect.php'; 
                     $i = 1;
                     $total = 0;
-                        $qry = $con->query("SELECT * from `running_balance` inner join `money_detail` on running_balance.md_id = money_detail.md_id where money_detail.status=1 and running_balance.balance_type = 1 and date(running_balance.date_created) between '{$date_start}' and '{$date_end}' order by unix_timestamp(running_balance.date_created) asc");
+                        $qry = $con->query("SELECT * from `running_balance` 
+                        inner join `money_detail` on running_balance.md_id = money_detail.md_id where money_detail.status=1 and running_balance.balance_type = 1 and date(running_balance.date_created) between '{$date_start}' and '{$date_end}' order by unix_timestamp(running_balance.date_created) asc");
                         while($row = $qry->fetch_assoc()):
                             $row['remarks'] = (stripslashes(html_entity_decode($row['remarks'])));
                             $total += $row['amount'];

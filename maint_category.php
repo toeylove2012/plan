@@ -272,7 +272,8 @@ if(!isset($_SESSION["username"]))
                                                 </thead>
                                                 <tbody>
                                                     <?php require 'connect.php';
-				$query = $con->query("SELECT money_detail.md_id, money_type.mt_id, money_detail.md_name, money_detail.description, money_detail.status, money_detail.grade_id, money_detail.f_id, money_detail.date_created, money_detail.date_updated, money_type.mt_name, financial_type.f_name FROM money_detail JOIN money_type ON money_detail.mt_id = money_type.mt_id LEFT JOIN financial_type ON money_detail.f_id = financial_type.f_id;");
+				$query = $con->query("SELECT money_detail.md_id, money_type.mt_id, money_detail.md_name, money_detail.description, money_detail.status, money_detail.grade_id, money_detail.f_id, money_detail.date_created, 
+                    money_detail.date_updated, money_type.mt_name, financial_type.f_name FROM money_detail JOIN money_type ON money_detail.mt_id = money_type.mt_id LEFT JOIN financial_type ON money_detail.f_id = financial_type.f_id;");
                 $row = 1;
 				while($fetch = $query->fetch_array()){
           $status = $fetch['status'];

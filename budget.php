@@ -257,7 +257,8 @@ if(!isset($_SESSION["username"]))
                                                 </thead>
                                                 <tbody>
                                                     <?php require 'connect.php';
-				$query = $con->query("SELECT * FROM `running_balance` INNER JOIN `money_detail` ON running_balance.md_id = money_detail.md_id WHERE money_detail.status=1 and running_balance.balance_type=1 order by unix_timestamp(running_balance.date_created) desc");
+				$query = $con->query("SELECT * FROM `running_balance` 
+                INNER JOIN `money_detail` ON running_balance.md_id = money_detail.md_id WHERE money_detail.status=1 and running_balance.balance_type=1 order by unix_timestamp(running_balance.date_created) desc");
         $row = 1;
 				while($fetch = $query->fetch_array()){
 					?>
